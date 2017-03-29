@@ -14,33 +14,54 @@
 	<title>DPSdruk.pl Digital Printing Solutions</title>
 </head>
 <body>
-	<div class="panel panel-left panel-cover">
-		<div class="view panel-view">
-			#panel
+	<div class="panel-overlay"></div>
+	<div class="panel panel-left panel-reveal">
+		<div class="content-block">
+			<p>Left Panel content here</p>
+			<!-- Click on link with "close-panel" class will close panel -->
+			<p><a href="#" class="close-panel">Close me</a></p>
+			<!-- Click on link with "open-panel" and data-panel="right" attribute will open Right panel -->
+			<p><a href="#about" class="close-panel">about</a></p>
+			<p><a href="#services" class="close-panel">services</a></p>
+			<p><a href="#contact" class="close-panel">contact</a></p>
 		</div>
 	</div>
 	<div class="views">
 		<div class="view view-main">
-			<div class="pages navbar-fixed toolbar-fixed">
-				<div data-page="index" class="page">
-					<div class="navbar">
-						<div class="navbar-inner">
-							<div class="center">Awesome App</div>
-						</div>
+			<div class="navbar">
+				<div class="navbar-inner" data-page="index">
+					<div class="left">
+						<a href="#" data-panel="left" class="link open-panel">
+							<i class="icon icon-bars"></i>
+							<span>Menu</span>
+						</a>
 					</div>
-					<div class="toolbar">
-						<div class="toolbar-inner">
-							<a href="#" class="link">Link 1</a>
-							<a href="#" class="link">Link 2</a>
-						</div>
+					<div class="center">
+						<a href="#index" class="link">
+							<span><i class="material-icons">&#xE0DA;</i> Logo</span>
+						</a>
 					</div>
-					<div class="page-content">
-						<p>Page content goes here</p>
-						<a href="#about">About</a>
-						<a href="#services">Services</a>
+					<div class="right">
+						<a href="#contact" class="link">
+							<i class="icon icon-local-phone"></i>
+							<span>Kontakt</span>
+						</a>
 					</div>
 				</div>
-				<div data-page="about" class="page cached">
+				<div class="navbar-inner cached" data-page="about">
+					<div class="center">About</div>
+				</div>
+				<div class="navbar-inner cached" data-page="services">
+					<div class="center">Services</div>
+				</div>
+			</div>
+			<div class="pages navbar-fixed">
+				<div class="page" data-page="index">
+					<div class="page-content">
+						<p>Index page</p>
+					</div>
+				</div>
+				<div class="page cached" data-page="about">
 					<div class="page-content">
 						<p>About page</p>
 					</div>
@@ -50,10 +71,15 @@
 						<p>Services page</p>
 					</div>
 				</div>
+				<div class="page cached" data-page="contact">
+					<div class="page-content">
+						<p>contact page</p>
+					</div>
+				</div>
 			</div>
 		</div>
     </div>
-	<script type="text/javascript" src="cordova.js"></script>
+	<!--<script type="text/javascript" src="cordova.js"></script>-->
 	<script type="text/javascript" src="js/framework7.min.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<script type="text/javascript">

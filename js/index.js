@@ -3,9 +3,9 @@ var app = {
 		this.bindEvents();
 	},
 	bindEvents: function() {
-		document.addEventListener('deviceready', this.onDeviceReady, false);
-	},
-	onDeviceReady: function() {
+		//document.addEventListener('deviceready', this.onDeviceReady, false);
+		
+		//wszystko przenieść do app.onDeviceReady
 		var myApp = new Framework7({
 			pushState: true,
 			swipePanel: 'left',
@@ -20,8 +20,11 @@ var app = {
 			}
 		});
 		
-		var mainView = myApp.addView('.view-main');
-		mainView.router.load({pageName: 'about'});
-		mainView.router.load({pageName: 'services'});
+		var mainView = myApp.addView('.view-main', {
+			domCache: true //enable inline pages
+		});
+	},
+	onDeviceReady: function() {
+		
 	},
 };
