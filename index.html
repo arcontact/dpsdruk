@@ -6,8 +6,8 @@
 	<meta name="msapplication-tap-highlight" content="no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
 	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="theme-color" content="#2196f3">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" />
+	<meta name="theme-color" content="#ec1b2e">
+	<!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" />-->
 	<link rel="stylesheet" type="text/css" href="css/framework7.material.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/framework7.material.colors.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/material-icons.css" />
@@ -16,64 +16,117 @@
 </head>
 <body>
 	<div class="panel-overlay"></div>
-	<div class="panel panel-left panel-reveal">
+	<div class="panel panel-right panel-reveal">
 		<div class="content-block">
 			<p>Left Panel content here</p>
-			<!-- Click on link with "close-panel" class will close panel -->
-			<p><a href="#" class="close-panel">Close me</a></p>
-			<!-- Click on link with "open-panel" and data-panel="right" attribute will open Right panel -->
+			<p><a href="#" class="close-panel">Zamknij</a></p>
 			<p><a href="#about" class="close-panel">about</a></p>
 			<p><a href="#services" class="close-panel">services</a></p>
 			<p><a href="#contact" class="close-panel">contact</a></p>
 		</div>
+		<div class="content-block-title">Kategorie produktów</div>
+		<div class="list-block" id="categories-list">
+			<ul></ul>
+		</div>
 	</div>
 	<div class="views">
 		<div class="view view-main">
-			<div class="navbar">
-				<div class="navbar-inner" data-page="index">
-					<div class="left">
-						<a href="#" data-panel="left" class="link open-panel">
-							<i class="icon icon-bars"></i>
-							<span>Menu</span>
-						</a>
+			<div class="pages">
+				<div class="page navbar-fixed" data-page="index">
+					<div class="navbar">
+						<div class="navbar-inner" data-page="index">
+							<div class="left">
+								<a href="#contact" class="link">
+									<i class="icon icon-local-phone"></i>
+									<span><i class="material-icons">&#xe551;</i></span>
+								</a>
+							</div>
+							<div class="center">
+								<a href="#index" class="link">
+									<img src="img/logo.png" alt="DPSDRUK.PL" />
+								</a>
+							</div>
+							<div class="right">
+								<a href="#" data-panel="right" class="link open-panel">
+									<i class="icon icon-bars"></i>
+								</a>
+							</div>
+						</div>
 					</div>
-					<div class="center">
-						<a href="#index" class="link">
-							<span><i class="material-icons">&#xE0DA;</i> Logo</span>
-						</a>
-					</div>
-					<div class="right">
-						<a href="#contact" class="link">
-							<i class="icon icon-local-phone"></i>
-							<span><i class="material-icons">&#xe551;</i> Kontakt</span>
-						</a>
-					</div>
-				</div>
-				<div class="navbar-inner cached" data-page="about">
-					<div class="center">About</div>
-				</div>
-				<div class="navbar-inner cached" data-page="services">
-					<div class="center">Services</div>
-				</div>
-			</div>
-			<div class="pages navbar-fixed">
-				<div class="page" data-page="index">
-					<div class="page-content">
-						<p>Index page</p>
+					<div class="page-content hide-bars-on-scroll">
+						<div class="content-block">
+							<p>Index page</p>
+						</div>
 					</div>
 				</div>
-				<div class="page cached" data-page="about">
-					<div class="page-content">
-						<p>About page</p>
+				<div class="page cached navbar-fixed" data-page="about">
+					<div class="navbar">
+						<div class="navbar-inner" data-page="index">
+							<div class="left">
+								<a href="#" class="link icon-only back">
+									<i class="icon icon-back"></i>
+								</a>
+							</div>
+							<div class="center">
+								About
+							</div>
+							<div class="right">
+								<a href="#" data-panel="right" class="link open-panel">
+									<i class="icon icon-bars"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="page-content hide-bars-on-scroll">
+						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
+						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
+						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
+						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
+						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
+						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
 					</div>
 				</div>
 				<div class="page cached" data-page="services">
-					<div class="page-content">
+					<div class="navbar">
+						<div class="navbar-inner" data-page="index">
+							<div class="left">
+								<a href="#" class="link icon-only back">
+									<i class="icon icon-back"></i>
+								</a>
+							</div>
+							<div class="center">
+								Services
+							</div>
+							<div class="right">
+								<a href="#" data-panel="right" class="link open-panel">
+									<i class="icon icon-bars"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="page-content hide-bars-on-scroll">
 						<p>Services page</p>
 					</div>
 				</div>
 				<div class="page cached" data-page="contact">
-					<div class="page-content">
+					<div class="navbar">
+						<div class="navbar-inner" data-page="index">
+							<div class="left">
+								<a href="#" class="link icon-only back">
+									<i class="icon icon-back"></i>
+								</a>
+							</div>
+							<div class="center">
+								contact
+							</div>
+							<div class="right">
+								<a href="#" data-panel="right" class="link open-panel">
+									<i class="icon icon-bars"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="page-content hide-bars-on-scroll">
 						<p>contact page</p>
 					</div>
 				</div>
