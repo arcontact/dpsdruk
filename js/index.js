@@ -19,5 +19,9 @@ var app = {
 				myApp.hideIndicator();
 			}
 		});
+		
+		var mainView = myApp.addView('.view-main');
+		mainView.router.load({pageName: 'about'});
+		mainView.router.load({pageName: 'services'});
 	},
 };
