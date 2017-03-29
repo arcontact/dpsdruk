@@ -6,7 +6,6 @@ var app = {
 		document.addEventListener('deviceready', this.onDeviceReady, false);
 	},
 	onDeviceReady: function() {
-		var myApp = new Framework7();
 		var myApp = new Framework7({
 			pushState: true,
 			swipePanel: 'left',
