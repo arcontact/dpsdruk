@@ -22,13 +22,15 @@ var	api_splash_methods = ['index_categories','index_articles','splash_page'],
 	splash_articles = [],
 	splash_categories = [],
 	splash_page = [],
+	current_category_id,
+	current_subcategory_id,
 	$$ = Dom7,
 	myApp,
 	mainView;
 
 var app = {
 	settings: {
-		eval_callbacks: ['api_init_check','api_init_end','single_article'],
+		eval_callbacks: ['api_init_check','api_init_end','single_article','single_category'],
 		key: 'e547a2036c6faffc2859e132e7eee66f',
 	},
 	initialize: function() {
@@ -149,12 +151,12 @@ var app = {
 		}
 	},
 	api_init_end: function(){
-		$$('#categories-list').html('<div class="content-block-title">Kategorie produktów</div><div class="list-block"></div>');
+		$$('#categories-list').html('<div class="list-block"></div>');
 		$$.each(splash_categories,function(i, category){
 			if(typeof category.children != 'undefined'){
 				var html = '<div class="list-group"><ul><li class="list-group-title">'+category.title+'</li>';
 				$$.each(category.children,function(i, subcategory){
-					html += '<li><a href="#" class="item-link item-content close-panel" data-id="'+subcategory.id+'"><div class="item-inner"><div class="item-title">'+subcategory.title+'</div></div></a></li>';
+					html += '<li><a href="single_category.html?category_id='+category.id+'&subcategory_id='+subcategory.id+'" class="item-link item-content close-panel" data-id="'+subcategory.id+'" data-ignore-cache="true" data-animate-pages="false"><div class="item-inner"><div class="item-title">'+subcategory.title+'</div></div></a></li>';
 				});
 				html += '</ul></div>';
 				$$('#categories-list .list-block').append(html);
@@ -214,10 +216,17 @@ var app = {
 				app.api_offline();
 			}
 		});
-		$$(document).on('page:beforeinit', '.page[data-page="article"]', function (e) {
-			$$('#single_article').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
+		$$(document).on('page:beforeinit', '.page[data-page="single_article"]', function (e) {
+			$$('#single_article_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
 			var page = e.detail.page;
 			app.api_call('get_article/'+page.query.article_id, {key: app.settings.key}, 'single_article');
+		});
+		$$(document).on('page:afteranimation', '.page[data-page="single_category"]', function (e) {
+			$$('.page[data-page="single_category"].page-on-center .single_category_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
+			var page = e.detail.page;
+			current_category_id = page.query.category_id;
+			current_subcategory_id = page.query.subcategory_id;
+			app.api_call('index_products/'+page.query.category_id, {key: app.settings.key}, 'single_category');
 		});
 		
 		//infinitescroll articles
@@ -273,6 +282,18 @@ var app = {
 		} else {
 			article_image = 'img/noimage653x356.jpg';
 		}
-		$$('#single_article').html('<div class="content-block"><h2>'+article.article_translation_title+'</h2><p>'+article_date+'</p><img src="'+article_image+'" class="img-responsive" />'+article.article_translation_content+'</div>');
+		$$('#single_article_contents').html('<div class="content-block"><h2>'+article.article_translation_title+'</h2><p>'+article_date+'</p><img src="'+article_image+'" class="img-responsive" />'+article.article_translation_content+'</div>');
+	},
+	single_category: function(response){
+		response.shift();
+		$$.each(splash_categories,function(i, category){
+			if(category.id == current_category_id){
+				$$.each(category.children,function(i, subcategory){
+					if(subcategory.id == current_subcategory_id){
+						$$('.page[data-page="single_category"].page-on-center .single_category_contents').html('<div class="content-block"><h2>'+subcategory.title+'</h2>'+subcategory.content+'</div>');
+					}
+				});
+			}
+		});
 	}
 };

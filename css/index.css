@@ -2,8 +2,10 @@
 .text-center{text-align:center;}
 .text-center .img-responsive{margin-left:auto; margin-right:auto;}
 .material-icons{vertical-align:middle;}
-#categories-list{font-size:12px;}
+#categories-list .list-block{font-size:13px;}
+#categories-list .list-block .list-group-title{height:auto; line-height:14px; font-size:14px; overflow:hidden; padding:10px 16px;}
 #categories-list .item-content, #categories-list .item-inner{min-height:initial;}
+#categories-list .item-title, #categories-list .list-block .list-group-title{white-space:normal;}
 .articles-list .list-block{font-size:14px; margin-bottom:14px;}
 .articles-list .list-block .item-subtitle{font-size:12px;}
 .fa-spin{-webkit-animation:fa-spin 2s infinite linear;animation:fa-spin 2s infinite linear;}
