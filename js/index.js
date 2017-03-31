@@ -17,11 +17,18 @@ function findIndexByKeyValue(arr, v) {
 	return null;
 }
 
-var $$ = Dom7;
-var myApp;
+var	api_splash_methods = ['index_categories','index_articles','splash_page'],
+	loaded_api_splash_methods = [],
+	splash_articles = [],
+	splash_categories = [],
+	splash_page = [],
+	$$ = Dom7,
+	myApp,
+	mainView;
+
 var app = {
 	settings: {
-		callbacks: ['api_init_end'],
+		eval_callbacks: ['api_init_check','api_init_end','single_article'],
 		key: 'e547a2036c6faffc2859e132e7eee66f',
 	},
 	initialize: function() {
@@ -32,7 +39,34 @@ var app = {
 		app.api_init_start();
 	},
 	onDeviceReady: function() {
-		
+		//app.api_init_start();
+	},
+	checkConnection: function() {
+		if(typeof navigator.connection == 'undefined' || typeof navigator.connection.type == 'undefined') {
+			return 'fail';
+		}
+		var networkState = navigator.connection.type;
+		var states = {};
+		states[Connection.UNKNOWN]  = 'Unknown connection';
+		states[Connection.ETHERNET] = 'Ethernet connection';
+		states[Connection.WIFI]     = 'WiFi connection';
+		states[Connection.CELL_2G]  = 'Cell 2G connection';
+		states[Connection.CELL_3G]  = 'Cell 3G connection';
+		states[Connection.CELL_4G]  = 'Cell 4G connection';
+		states[Connection.CELL]     = 'Cell generic connection';
+		states[Connection.NONE]     = 'fail';
+		return states[networkState];
+	},
+	gotConnection: function(){
+		//var a = app.checkConnection();
+		//if(a == 'fail'){return false;}
+		return true;
+	},
+	api_offline: function(){
+		mainView.router.load({
+			url: 'offline.html',
+			animatePages: false
+		});
 	},
 	api_init_start: function(){
 		myApp = new Framework7({
@@ -52,26 +86,110 @@ var app = {
 				myApp.hideIndicator();
 			}
 		});
-		var mainView = myApp.addView('.view-main', {
-			domCache: true //enable inline pages
+		mainView = myApp.addView('.view-main', {
+			domCache: true
 		});
-		myApp.showPreloader('Ładuję aplikację ...');
-		app.api('index_categories', {key: app.settings.key}, 'api_init_end');
+		if(app.gotConnection()){
+			app.api_init_connected();
+		} else {
+			var api_init_start_modal = myApp.modal({
+				title: '<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Brak połączenia z internetem</div>',
+				text: '<div class="text-center">Aplikacja wymaga połączenia z internetem do poprawnego funkcjonowania.</div>',
+				buttons: [
+					{
+						text: '<i class="material-icons">&#xe5d5;</i> Odśwież',
+						close: false,
+						bold: true,
+						onClick: function(){
+							$$(api_init_start_modal).find('.modal-button-bold').html('<i class="material-icons fa-spin">&#xe5d5;</i> Sprawdzam...');
+							if(app.gotConnection()){
+								app.api_init_connected();
+							} else {
+								setTimeout(function(){
+									$$(api_init_start_modal).find('.modal-text').html('<div class="text-center"><span class="text-danger">Nie udało się nawiązać połączenia.</span></div>');
+									$$(api_init_start_modal).find('.modal-button-bold').html('<i class="material-icons">&#xe5d5;</i> Odśwież');
+								}, 1000);
+							}
+						}
+					},
+					{
+						text: 'Zamknij',
+						onClick: function(){
+							app.api_offline();
+						}
+					}
+				]
+			});
+		}
 	},
-	api_init_end: function(response){
-		$$.each(response,function(index, category){
-			var li = '<li><a href="#" class="item-link item-content"><div class="item-inner"><div class="item-title">'+category.category_translation_title+'</div></div></a></li>';
+	api_init_connected: function(){
+		myApp.closeModal();
+		myApp.showPreloader('Ładuję aplikację...');
+		$$.each(api_splash_methods, function(i,method){
+			app.api_call(method, {key: app.settings.key}, 'api_init_check');
+		});
+	},
+	api_init_check: function(response){
+		var method = response[0];
+		response.shift();
+		switch(method){
+			case "index_categories":
+				splash_categories = response;
+			break;
+			case "index_articles":
+				splash_articles = response;
+			break;
+			case "splash_page":
+				splash_page = response;
+			break;
+		}
+		loaded_api_splash_methods.push(method);
+		if(api_splash_methods.length == loaded_api_splash_methods.length){
+			app.api_init_end();
+		}
+	},
+	api_init_end: function(){
+		$$('#categories-list').html('<div class="content-block-title">Kategorie produktów</div><div class="list-block"></div>');
+		$$.each(splash_categories,function(i, category){
+			if(typeof category.children != 'undefined'){
+				var html = '<div class="list-group"><ul><li class="list-group-title">'+category.title+'</li>';
+				$$.each(category.children,function(i, subcategory){
+					html += '<li><a href="#" class="item-link item-content close-panel" data-id="'+subcategory.id+'"><div class="item-inner"><div class="item-title">'+subcategory.title+'</div></div></a></li>';
+				});
+				html += '</ul></div>';
+				$$('#categories-list .list-block').append(html);
+			}
+		});
+		/*$$('#categories-list').html('<div class="content-block-title">Kategorie produktów</div><div class="list-block"><ul></ul></div>');
+		$$.each(splash_categories,function(i, category){
+			var li = '<li><a class="item-link item-content close-panel" data-id="'+category.id+'"><div class="item-inner"><div class="item-title">'+category.title+'</div></div></a></li>';
 			$$('#categories-list ul').append(li);
+		});*/
+		$$('#splash_page').html(splash_page[0].page_translation_content);
+		$$('#splash_articles').html('<div class="content-block-title">Aktualności</div><div class="list-block media-list"><ul></ul></div>');
+		$$.each(splash_articles,function(i, article){
+			var article_date = moment(article.date).format('DD.MM.YYYY');
+			var article_image;
+			if(typeof article.image != 'undefined'){
+				article_image = 'https://www.beta.dpsdruk.pl/assets/articles/s1_'+article.image;
+			} else {
+				article_image = 'img/noimage200x104.jpg';
+			}
+			var li = '<li><a href="single_article.html?article_id='+article.id+'" class="item-link item-content"><div class="item-media"><img src="'+article_image+'" width="80" /></div><div class="item-inner"><div class="item-title-row"><div class="item-title">'+article.article_translation_title+'</div></div><div class="item-subtitle">'+article_date+'</div></div></a></li>';
+			$$('#splash_articles ul').append(li);
 		});
+		$$('#splash_articles').append('<div class="infinite-scroll-preloader"><div class="preloader"><span class="preloader-inner"><span class="preloader-inner-gap"></span><span class="preloader-inner-left"><span class="preloader-inner-half-circle"></span></span><span class="preloader-inner-right"><span class="preloader-inner-half-circle"></span></span></span></div></div>');
 		myApp.hidePreloader();
+		app.listeners();
 	},
-	api: function(method, params, callback){
+	api_call: function(method, params, callback){
 		$$.ajax({
 			url: 'https://www.beta.dpsdruk.pl/api/' + method,
 			crossDomain: true,
 			data: params,
 			dataType: 'json',
 			success: function(response, status, xhr){
+				response.unshift(method);
 				app.myEval(callback, response);
 			},
 			error: function(xhr, status){
@@ -80,14 +198,81 @@ var app = {
 		});
 	},
 	myEval: function(fn_name, params){
-		var key = findIndexByKeyValue(app.settings.callbacks, fn_name);
+		var key = findIndexByKeyValue(app.settings.eval_callbacks, fn_name);
 		if(key !== null){
-			var fn = app.settings.callbacks[key];
+			var fn = app.settings.eval_callbacks[key];
 			if(params != null){
 				app[fn](params);
 			} else {
 				app[fn]();
 			}
 		}
+	},
+	listeners: function(){
+		$$(document).on('page:beforeinit', '.page[data-page="index"]', function (e) {
+			if(!app.gotConnection()){
+				app.api_offline();
+			}
+		});
+		$$(document).on('page:beforeinit', '.page[data-page="article"]', function (e) {
+			$$('#single_article').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
+			var page = e.detail.page;
+			app.api_call('get_article/'+page.query.article_id, {key: app.settings.key}, 'single_article');
+		});
+		
+		//infinitescroll articles
+		var loading = false;
+		var lastIndex = $$('.articles-list .list-block li').length;
+		var itemsPerLoad = 6;
+		var offset = 6;
+		$$('.articles-infinite-scroll.infinite-scroll').on('infinite', function () {
+			if(loading) return;
+			loading = true;
+			setTimeout(function(){
+				$$.ajax({
+					url: 'https://www.beta.dpsdruk.pl/api/index_articles/' + itemsPerLoad + '/' + offset,
+					crossDomain: true,
+					dataType: 'json',
+					data: {key: app.settings.key},
+					success: function(response, status, xhr){
+						loading = false;
+						if(response.length <= 0){
+							myApp.detachInfiniteScroll($$('.infinite-scroll'));
+							$$('.infinite-scroll-preloader').remove();
+							return;
+						}
+						var html = '';
+						$$.each(response,function(i, article){
+							var article_date = moment(article.date).format('DD.MM.YYYY');
+							var article_image;
+							if(typeof article.image != 'undefined'){
+								article_image = 'https://www.beta.dpsdruk.pl/assets/articles/s1_'+article.image;
+							} else {
+								article_image = 'img/noimage200x104.jpg';
+							}
+							html += '<li><a href="single_article.html?article_id='+article.id+'" class="item-link item-content"><div class="item-media"><img src="'+article_image+'" width="80" /></div><div class="item-inner"><div class="item-title-row"><div class="item-title">'+article.article_translation_title+'</div></div><div class="item-subtitle">'+article_date+'</div></div></a></li>';
+						});
+						$$('.articles-list .list-block ul').append(html);
+						lastIndex = $$('.articles-list .list-block li').length;
+						offset = offset + itemsPerLoad;
+					},
+					error: function(xhr, status){
+						//handle ajax error
+					}
+				});
+			}, 1000);
+		});
+	},
+	single_article: function(response){
+		response.shift();
+		var article = response[0];
+		var article_date = moment(article.date).format('DD.MM.YYYY');
+		var article_image;
+		if(typeof article.image != 'undefined'){
+			article_image = 'https://www.beta.dpsdruk.pl/assets/articles/s3_'+article.image;
+		} else {
+			article_image = 'img/noimage653x356.jpg';
+		}
+		$$('#single_article').html('<div class="content-block"><h2>'+article.article_translation_title+'</h2><p>'+article_date+'</p><img src="'+article_image+'" class="img-responsive" />'+article.article_translation_content+'</div>');
 	}
 };

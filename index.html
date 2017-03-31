@@ -24,17 +24,14 @@
 			<p><a href="#services" class="close-panel">services</a></p>
 			<p><a href="#contact" class="close-panel">contact</a></p>
 		</div>
-		<div class="content-block-title">Kategorie produktów</div>
-		<div class="list-block" id="categories-list">
-			<ul></ul>
-		</div>
+		<div  id="categories-list"></div>
 	</div>
 	<div class="views">
 		<div class="view view-main">
 			<div class="pages">
 				<div class="page navbar-fixed" data-page="index">
 					<div class="navbar">
-						<div class="navbar-inner" data-page="index">
+						<div class="navbar-inner">
 							<div class="left">
 								<a href="#contact" class="link">
 									<i class="icon icon-local-phone"></i>
@@ -53,17 +50,18 @@
 							</div>
 						</div>
 					</div>
-					<div class="page-content hide-bars-on-scroll">
+					<div class="page-content hide-bars-on-scroll infinite-scroll articles-infinite-scroll" data-distance="100">
 						<div class="content-block">
-							<p>Index page</p>
+							<div id="splash_page"></div>
 						</div>
+						<div id="splash_articles" class="articles-list"></div>
 					</div>
 				</div>
 				<div class="page cached navbar-fixed" data-page="about">
 					<div class="navbar">
-						<div class="navbar-inner" data-page="index">
+						<div class="navbar-inner">
 							<div class="left">
-								<a href="#" class="link icon-only back">
+								<a href="#index" class="link icon-only back">
 									<i class="icon icon-back"></i>
 								</a>
 							</div>
@@ -86,11 +84,11 @@
 						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
 					</div>
 				</div>
-				<div class="page cached" data-page="services">
+				<div class="page cached navbar-fixed" data-page="services">
 					<div class="navbar">
-						<div class="navbar-inner" data-page="index">
+						<div class="navbar-inner">
 							<div class="left">
-								<a href="#" class="link icon-only back">
+								<a href="#index" class="link icon-only back">
 									<i class="icon icon-back"></i>
 								</a>
 							</div>
@@ -108,11 +106,11 @@
 						<p>Services page</p>
 					</div>
 				</div>
-				<div class="page cached" data-page="contact">
+				<div class="page cached navbar-fixed" data-page="contact">
 					<div class="navbar">
-						<div class="navbar-inner" data-page="index">
+						<div class="navbar-inner">
 							<div class="left">
-								<a href="#" class="link icon-only back">
+								<a href="#index" class="link icon-only back">
 									<i class="icon icon-back"></i>
 								</a>
 							</div>
@@ -130,11 +128,33 @@
 						<p>contact page</p>
 					</div>
 				</div>
+				<!--<div class="page cached navbar-fixed" data-page="parent_category">
+					<div class="navbar">
+						<div class="navbar-inner">
+							<div class="left">
+								<a href="#index" class="link icon-only back">
+									<i class="icon icon-back"></i>
+								</a>
+							</div>
+							<div class="center">
+								Kategorie
+							</div>
+							<div class="right">
+								<a href="#" data-panel="right" class="link open-panel">
+									<i class="icon icon-bars"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="page-content hide-bars-on-scroll subcategories_list"></div>
+				</div>-->
 			</div>
 		</div>
     </div>
 	<!--<script type="text/javascript" src="cordova.js"></script>-->
 	<script type="text/javascript" src="js/framework7.min.js"></script>
+	<script type="text/javascript" src="js/moment.min.js"></script>
+	<script type="text/javascript" src="js/moment.pl.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<script type="text/javascript">
 		app.initialize();
