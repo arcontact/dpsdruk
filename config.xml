@@ -76,11 +76,11 @@
         <splash src="res/screen/android/drawable-port-xxhdpi-screen.png"    density="port-xxhdpi" />
         <splash src="res/screen/android/drawable-port-xxxhdpi-screen.png"   density="port-xxxhdpi" />
 		-->
-		<splash src="res/screen/android/drawable-mdpi/splash.9.png"      density="mdpi" />
-		<splash src="res/screen/android/drawable-hdpi/splash.9.png"      density="hdpi" />
-        <splash src="res/screen/android/drawable-xhdpi/splash.9.png"     density="xhdpi" />
-        <splash src="res/screen/android/drawable-xxhdpi/splash.9.png"    density="xxhdpi" />
-        <splash src="res/screen/android/drawable-xxxhdpi/splash.9.png"   density="xxxhdpi" />
+		<splash src="res/screen/android/drawable-mdpi/splash-9.png"      density="mdpi" />
+		<splash src="res/screen/android/drawable-hdpi/splash-9.png"      density="hdpi" />
+        <splash src="res/screen/android/drawable-xhdpi/splash-9.png"     density="xhdpi" />
+        <splash src="res/screen/android/drawable-xxhdpi/splash-9.png"    density="xxhdpi" />
+        <splash src="res/screen/android/drawable-xxxhdpi/splash-9.png"   density="xxxhdpi" />
     </platform>
 
     <!--
