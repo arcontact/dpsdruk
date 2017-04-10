@@ -17,3 +17,7 @@
   0% {-webkit-transform: rotate(0deg);transform: rotate(0deg);}
   100% {-webkit-transform: rotate(359deg);transform: rotate(359deg);}
 }
+#splash_page{position:relative; margin-top:-56px; background:#E2001A url('../img/bg1.jpg') top center no-repeat; background-size:cover; background-position:center 56px; color:#fff; padding:56px 15px 5px 15px; border-bottom:2px solid #d00018;}
+.navbar.logo-center .center{margin-left:auto; margin-right:auto;}
+.navbar.logo-center .right{margin-left:0px;}
+.single_category_contents .card{background-color:#E2001A; color:#fff;}

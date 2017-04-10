@@ -17,16 +17,17 @@ function findIndexByKeyValue(arr, v) {
 	return null;
 }
 
-var	api_splash_methods = ['index_categories','index_articles','splash_page'],
+var	api_splash_methods = ['index_categories','index_articles'],
 	loaded_api_splash_methods = [],
 	splash_articles = [],
 	splash_categories = [],
-	splash_page = [],
 	current_category_id,
 	current_subcategory_id,
 	$$ = Dom7,
 	myApp,
-	mainView;
+	mainView,
+	articles_limit = 5,
+	articles_offset = articles_limit;
 
 var app = {
 	settings: {
@@ -63,6 +64,15 @@ var app = {
 		//var a = app.checkConnection();
 		//if(a == 'fail'){return false;}
 		return true;
+	},
+	refreshConnection: function(button){
+		$$(button).html('<i class="material-icons fa-spin">&#xe5d5;</i> Sprawdzam...');
+		setTimeout(function(){
+			$$(button).html('<i class="material-icons">&#xe5d5;</i> Odśwież');
+			if(app.gotConnection()){
+				app.api_init_connected();
+			}
+		}, 1000);
 	},
 	api_offline: function(){
 		mainView.router.load({
@@ -127,6 +137,11 @@ var app = {
 	api_init_connected: function(){
 		myApp.closeModal();
 		myApp.showPreloader('Ładuję aplikację...');
+		
+		loaded_api_splash_methods = [];
+		splash_articles = [];
+		splash_categories = [];
+		
 		$$.each(api_splash_methods, function(i,method){
 			app.api_call(method, {key: app.settings.key}, 'api_init_check');
 		});
@@ -140,9 +155,6 @@ var app = {
 			break;
 			case "index_articles":
 				splash_articles = response;
-			break;
-			case "splash_page":
-				splash_page = response;
 			break;
 		}
 		loaded_api_splash_methods.push(method);
@@ -167,7 +179,6 @@ var app = {
 			var li = '<li><a class="item-link item-content close-panel" data-id="'+category.id+'"><div class="item-inner"><div class="item-title">'+category.title+'</div></div></a></li>';
 			$$('#categories-list ul').append(li);
 		});*/
-		$$('#splash_page').html(splash_page[0].page_translation_content);
 		$$('#splash_articles').html('<div class="content-block-title">Aktualności</div><div class="list-block media-list"><ul></ul></div>');
 		$$.each(splash_articles,function(i, article){
 			var article_date = moment(article.date).format('DD.MM.YYYY');
@@ -182,6 +193,7 @@ var app = {
 		});
 		$$('#splash_articles').append('<div class="infinite-scroll-preloader"><div class="preloader"><span class="preloader-inner"><span class="preloader-inner-gap"></span><span class="preloader-inner-left"><span class="preloader-inner-half-circle"></span></span><span class="preloader-inner-right"><span class="preloader-inner-half-circle"></span></span></span></div></div>');
 		myApp.hidePreloader();
+		mainView.router.loadPage('#index');
 		app.listeners();
 	},
 	api_call: function(method, params, callback){
@@ -226,20 +238,18 @@ var app = {
 			var page = e.detail.page;
 			current_category_id = page.query.category_id;
 			current_subcategory_id = page.query.subcategory_id;
-			app.api_call('index_products/'+page.query.category_id, {key: app.settings.key}, 'single_category');
+			app.api_call('index_products/'+page.query.subcategory_id, {key: app.settings.key}, 'single_category');
 		});
 		
 		//infinitescroll articles
 		var loading = false;
 		var lastIndex = $$('.articles-list .list-block li').length;
-		var itemsPerLoad = 6;
-		var offset = 6;
 		$$('.articles-infinite-scroll.infinite-scroll').on('infinite', function () {
 			if(loading) return;
 			loading = true;
 			setTimeout(function(){
 				$$.ajax({
-					url: 'https://www.beta.dpsdruk.pl/api/index_articles/' + itemsPerLoad + '/' + offset,
+					url: 'https://www.beta.dpsdruk.pl/api/index_articles/' + articles_limit + '/' + articles_offset,
 					crossDomain: true,
 					dataType: 'json',
 					data: {key: app.settings.key},
@@ -263,7 +273,7 @@ var app = {
 						});
 						$$('.articles-list .list-block ul').append(html);
 						lastIndex = $$('.articles-list .list-block li').length;
-						offset = offset + itemsPerLoad;
+						articles_offset = articles_offset + articles_limit;
 					},
 					error: function(xhr, status){
 						//handle ajax error
@@ -286,7 +296,8 @@ var app = {
 	},
 	single_category: function(response){
 		response.shift();
-		$$.each(splash_categories,function(i, category){
+		console.log(response);
+		$$.each(splash_categories, function(i, category){
 			if(category.id == current_category_id){
 				$$.each(category.children,function(i, subcategory){
 					if(subcategory.id == current_subcategory_id){
@@ -294,6 +305,16 @@ var app = {
 					}
 				});
 			}
+		});
+		$$.each(response, function(i, product){
+			var product_image;
+			if(typeof product.producer_tile_image != 'undefined'){
+				product_image = 'https://www.beta.dpsdruk.pl/assets/producers/s6_'+product.producer_tile_image;
+			} else {
+				product_image = 'img/noimage100x100.png';
+			}
+			var html = '<div class="card text-center"><div class="card-content"><div class="card-content-inner"><img src="'+product_image+'" alt="" class="img-responsive" />'+product.product_translation_title+'</div></div></div>';
+			$$('.page[data-page="single_category"].page-on-center .single_category_contents').append(html);
 		});
 	}
 };
