@@ -52,7 +52,7 @@
     <!-- <plugin name="cordova-plugin-vibration"           source="npm" spec="~2.1.0" /> -->
     <plugin name="cordova-plugin-whitelist"           source="npm" spec="~1.2.2" />
 
-	<splash src="splash.png" />
+	<splash src="splash.9.png" />
 	
     <!-- Define app icon and splashscreen for each platform. -->
     <platform name="android">
