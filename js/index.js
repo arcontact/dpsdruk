@@ -313,7 +313,7 @@ var app = {
 			} else {
 				product_image = 'img/noimage100x100.png';
 			}
-			var html = '<div class="card text-center"><div class="card-content"><div class="card-content-inner"><img src="'+product_image+'" alt="" class="img-responsive" />'+product.product_translation_title+'</div></div></div>';
+			var html = '<a class="card text-center"><div class="card-content"><div class="card-content-inner"><img src="'+product_image+'" alt="" class="img-responsive" />'+product.product_translation_title+'</div></div></a>';
 			$$('.page[data-page="single_category"].page-on-center .single_category_contents').append(html);
 		});
 	}
