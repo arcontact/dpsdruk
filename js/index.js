@@ -38,11 +38,11 @@ var app = {
 		this.bindEvents();
 	},
 	bindEvents: function() {
-		//document.addEventListener('deviceready', this.onDeviceReady, false);
-		app.api_init_start();
+		document.addEventListener('deviceready', this.onDeviceReady, false);
+		//app.api_init_start();
 	},
 	onDeviceReady: function() {
-		//app.api_init_start();
+		app.api_init_start();
 	},
 	checkConnection: function() {
 		if(typeof navigator.connection == 'undefined' || typeof navigator.connection.type == 'undefined') {
@@ -61,8 +61,8 @@ var app = {
 		return states[networkState];
 	},
 	gotConnection: function(){
-		//var a = app.checkConnection();
-		//if(a == 'fail'){return false;}
+		var a = app.checkConnection();
+		if(a == 'fail'){return false;}
 		return true;
 	},
 	refreshConnection: function(button){
