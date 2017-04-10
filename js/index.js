@@ -229,16 +229,24 @@ var app = {
 			}
 		});
 		$$(document).on('page:beforeinit', '.page[data-page="single_article"]', function (e) {
-			$$('#single_article_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
-			var page = e.detail.page;
-			app.api_call('get_article/'+page.query.article_id, {key: app.settings.key}, 'single_article');
+			if(app.gotConnection()){
+				$$('#single_article_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
+				var page = e.detail.page;
+				app.api_call('get_article/'+page.query.article_id, {key: app.settings.key}, 'single_article');
+			} else {
+				app.api_offline();
+			}
 		});
 		$$(document).on('page:afteranimation', '.page[data-page="single_category"]', function (e) {
-			$$('.page[data-page="single_category"].page-on-center .single_category_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
-			var page = e.detail.page;
-			current_category_id = page.query.category_id;
-			current_subcategory_id = page.query.subcategory_id;
-			app.api_call('index_products/'+page.query.subcategory_id, {key: app.settings.key}, 'single_category');
+			if(app.gotConnection()){
+				$$('.page[data-page="single_category"].page-on-center .single_category_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
+				var page = e.detail.page;
+				current_category_id = page.query.category_id;
+				current_subcategory_id = page.query.subcategory_id;
+				app.api_call('index_products/'+page.query.subcategory_id, {key: app.settings.key}, 'single_category');
+			} else {
+				app.api_offline();
+			}
 		});
 		
 		//infinitescroll articles
@@ -248,37 +256,41 @@ var app = {
 			if(loading) return;
 			loading = true;
 			setTimeout(function(){
-				$$.ajax({
-					url: 'https://www.beta.dpsdruk.pl/api/index_articles/' + articles_limit + '/' + articles_offset,
-					crossDomain: true,
-					dataType: 'json',
-					data: {key: app.settings.key},
-					success: function(response, status, xhr){
-						loading = false;
-						if(response.length <= 0){
-							myApp.detachInfiniteScroll($$('.infinite-scroll'));
-							$$('.infinite-scroll-preloader').remove();
-							return;
-						}
-						var html = '';
-						$$.each(response,function(i, article){
-							var article_date = moment(article.date).format('DD.MM.YYYY');
-							var article_image;
-							if(typeof article.image != 'undefined'){
-								article_image = 'https://www.beta.dpsdruk.pl/assets/articles/s1_'+article.image;
-							} else {
-								article_image = 'img/noimage200x104.jpg';
+				if(app.gotConnection()){
+					$$.ajax({
+						url: 'https://www.beta.dpsdruk.pl/api/index_articles/' + articles_limit + '/' + articles_offset,
+						crossDomain: true,
+						dataType: 'json',
+						data: {key: app.settings.key},
+						success: function(response, status, xhr){
+							loading = false;
+							if(response.length <= 0){
+								myApp.detachInfiniteScroll($$('.infinite-scroll'));
+								$$('.infinite-scroll-preloader').remove();
+								return;
 							}
-							html += '<li><a href="single_article.html?article_id='+article.id+'" class="item-link item-content"><div class="item-media"><img src="'+article_image+'" width="80" /></div><div class="item-inner"><div class="item-title-row"><div class="item-title">'+article.article_translation_title+'</div></div><div class="item-subtitle">'+article_date+'</div></div></a></li>';
-						});
-						$$('.articles-list .list-block ul').append(html);
-						lastIndex = $$('.articles-list .list-block li').length;
-						articles_offset = articles_offset + articles_limit;
-					},
-					error: function(xhr, status){
-						//handle ajax error
-					}
-				});
+							var html = '';
+							$$.each(response,function(i, article){
+								var article_date = moment(article.date).format('DD.MM.YYYY');
+								var article_image;
+								if(typeof article.image != 'undefined'){
+									article_image = 'https://www.beta.dpsdruk.pl/assets/articles/s1_'+article.image;
+								} else {
+									article_image = 'img/noimage200x104.jpg';
+								}
+								html += '<li><a href="single_article.html?article_id='+article.id+'" class="item-link item-content"><div class="item-media"><img src="'+article_image+'" width="80" /></div><div class="item-inner"><div class="item-title-row"><div class="item-title">'+article.article_translation_title+'</div></div><div class="item-subtitle">'+article_date+'</div></div></a></li>';
+							});
+							$$('.articles-list .list-block ul').append(html);
+							lastIndex = $$('.articles-list .list-block li').length;
+							articles_offset = articles_offset + articles_limit;
+						},
+						error: function(xhr, status){
+							//handle ajax error
+						}
+					});
+				} else {
+					app.api_offline();
+				}
 			}, 1000);
 		});
 	},
