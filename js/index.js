@@ -243,10 +243,25 @@ var app = {
 				app.api_offline();
 			}
 		});
+		$$('#contact-form').on('form:beforesend', function(e){
+			myApp.showPreloader();
+		});
 		$$('#contact-form').on('form:success', function(e){
+			myApp.hidePreloader();
 			var xhr = e.detail.xhr;
-			var data = e.detail.data;
-			myApp.alert(JSON.stringify(xhr.response));
+			myApp.alert(xhr.response.message);
+			switch(xhr.response.type){
+				case "success":
+					$$('#contact-form')[0].reset();
+				break;
+				case "error":
+					
+				break;
+			}
+		});
+		$$('#contact-form').on('form:error', function(e){
+			myApp.hidePreloader();
+			myApp.alert('Przepraszamy ale wystąpił błąd podczas wysyłania formularza.');
 		});
 		
 		//infinitescroll articles
