@@ -174,11 +174,6 @@ var app = {
 				$$('#categories-list .list-block').append(html);
 			}
 		});
-		/*$$('#categories-list').html('<div class="content-block-title">Kategorie produktów</div><div class="list-block"><ul></ul></div>');
-		$$.each(splash_categories,function(i, category){
-			var li = '<li><a class="item-link item-content close-panel" data-id="'+category.id+'"><div class="item-inner"><div class="item-title">'+category.title+'</div></div></a></li>';
-			$$('#categories-list ul').append(li);
-		});*/
 		$$('#splash_articles').html('<div class="content-block-title">Aktualności</div><div class="list-block media-list"><ul></ul></div>');
 		$$.each(splash_articles,function(i, article){
 			var article_date = moment(article.date).format('DD.MM.YYYY');
