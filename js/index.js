@@ -246,8 +246,7 @@ var app = {
 		$$('#contact-form').on('form:success', function(e){
 			var xhr = e.detail.xhr;
 			var data = e.detail.data;
-			console.log(xhr);
-			console.log(data);
+			myApp.alert(JSON.stringify(xhr.response));
 		});
 		
 		//infinitescroll articles
