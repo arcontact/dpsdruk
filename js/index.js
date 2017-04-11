@@ -249,8 +249,9 @@ var app = {
 		$$('#contact-form').on('form:success', function(e){
 			myApp.hidePreloader();
 			var xhr = e.detail.xhr;
-			myApp.alert(xhr.response.message);
-			switch(xhr.response.type){
+			var response = JSON.parse(xhr.response);
+			myApp.alert(response.message);
+			switch(response.type){
 				case "success":
 					$$('#contact-form')[0].reset();
 				break;
