@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="theme-color" content="#ec1b2e">
-	<!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" />-->
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self' http: https: file: data: gap: 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; font-src *; img-src 'self' data: https:;" />
 	<link rel="stylesheet" type="text/css" href="css/framework7.material.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/framework7.material.colors.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/material-icons.css" />
@@ -59,13 +59,13 @@
 							<i class="icon icon-close"></i>
 						</a>
 						<div class="speed-dial-buttons">
-							<a href="geo:37.786971,-122.399677;u=35">
+							<a href="geo:37.786971,-122.399677;u=35" class="external">
 								<i class="material-icons">&#xe55f;</i>
 							</a>
-							<a href="mailto:druk@dpsdruk.pl">
+							<a href="mailto:druk@dpsdruk.pl" class="external">
 								<i class="material-icons">&#xe0be;</i>
 							</a>
-							<a href="tel:+48556212121">
+							<a href="tel:+48556212121" class="external">
 								<i class="material-icons">&#xe0b0;</i>
 							</a>
 						</div>
@@ -145,13 +145,116 @@
 						</div>
 					</div>
 					<div class="page-content hide-bars-on-scroll">
-						<p>contact page</p>
+						<div class="content-block">
+							<table class="contact-table">
+								<tr>
+									<td style="width:1px;"><i class="material-icons">&#xe55f;</i></td>
+									<td>ul. Mikołaja Firleja 27<br />82-300 Elbląg</td>
+								</tr>
+								<tr>
+									<td><i class="material-icons">&#xe8ae;</i></td>
+									<td>dni robocze<br />7:00 - 16:00</td>
+								</tr>
+								<tr>
+									<td><i class="material-icons">&#xe0be;</i></td>
+									<td>
+										<a href="mailto:druk@dpsdruk.pl" class="external">druk@dpsdruk.pl</a><br />
+										<a href="mailto:contact@arcontact.pl" class="external">contact@arcontact.pl</a>
+									</td>
+								</tr>
+								<tr>
+									<td><i class="material-icons">&#xe0b0;</i></td>
+									<td>
+										<a href="tel:+48556212121" class="external">+48 55 621 21 21</a><br />
+										<a href="tel:+48725331515" class="external">+48 725 331 515</a><br />
+										<a href="tel:+48501493107" class="external">+48 501 493 107</a>
+									</td>
+								</tr>
+							</table>
+							<!--
+							<h2>Kontakt</h2>
+							<p>Właścicielem <strong>marki DPS</strong> oraz maszyn drukujących jest:<br />
+							<a href="http://www.arcontact.pl" class="external">Agencja Reklamowa CONTACT</a></p>
+							<p>Produkcja: 82-300 <strong>Elbląg</strong>, ul. Mikołaja Firleja 27<br />
+							Godziny otwarcia: Pn. - Pt. 7:00 do 16:00</p>
+							<p>Biuro w Warszawie: 03-741 <strong>Warszawa</strong>, ul. Białostocka 7</p>
+							<p>email: <a href="mailto:druk@dpsdruk.pl" class="external">druk@dpsdruk.pl</a> lub <a href="mailto:contact@arcontact.pl" class="external">contact@arcontact.pl</a><br />
+							tel. <a href="tel:+48556212121" class="external">+48 55 621 21 21</a><br />
+							faks +48 55 621 21 26<br />
+							Linie zajęte? Spróbuj na komórkę (numery dostępne do 16:00)<br /><a href="tel:+48725331515" class="external">+48 725 33 15 15</a><br />
+							<a href="tel:+48501493107" class="external">+48 501 493 107</a></p>
+							<p><strong>Dane do przelewów:</strong><br />
+							Agencja Reklamowa CONTACT</p>
+							<p>konto: Bank Spółdzielczy w Brodnicy<br />
+							nr 15 9484 1206 2850 0851 7447 0001</p>
+							<p>account EUR: Deutsche Bank S.A.<br />
+							no: PL 55191010482259017267380002<br />
+							SWIFT: DEUTPLPX</p>
+							-->
+						</div>
+						
+						<div class="content-block-title">SKONTAKTUJ SIĘ Z NAMI</div>
+						<form action="https://www.beta.dpsdruk.pl/api/contact_form?key=e547a2036c6faffc2859e132e7eee66f" class="list-block store-data ajax-submit" method="POST" id="contact-form" style="margin-bottom:10px;">
+							<ul>
+								<li>
+									<div class="item-content">
+										<div class="item-media"><i class="material-icons">&#xe7fd;</i></div>
+										<div class="item-inner">
+											<div class="item-title label">Imię i nazwisko</div>
+											<div class="item-input">
+												<input type="text" name="name" placeholder="Imię i nazwisko">
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-media"><i class="material-icons">&#xe0cd;</i></div>
+										<div class="item-inner">
+											<div class="item-title label">Numer telefonu</div>
+											<div class="item-input">
+												<input type="number" name="phone" placeholder="Numer telefonu">
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-media"><i class="material-icons">&#xe0be;</i></div>
+										<div class="item-inner">
+											<div class="item-title label">Adres e-mail</div>
+											<div class="item-input">
+												<input type="email" name="email" placeholder="Adres e-mail">
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-media"><i class="material-icons">&#xe0b7;</i></div>
+										<div class="item-inner">
+											<div class="item-title label">Wiadomość</div>
+											<div class="item-input">
+												<textarea class="resizable" name="message" placeholder="Wiadomość"></textarea>
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<button type="submit" class="button button-fill button-raised" style="width:100%;">WYŚLIJ</button>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</form>
 					</div>
 				</div>
 			</div>
 		</div>
     </div>
-	<script type="text/javascript" src="cordova.js"></script>
+	<!--<script type="text/javascript" src="cordova.js"></script>-->
 	<script type="text/javascript" src="js/framework7.min.js"></script>
 	<script type="text/javascript" src="js/moment.min.js"></script>
 	<script type="text/javascript" src="js/moment.pl.js"></script>

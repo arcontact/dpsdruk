@@ -38,8 +38,8 @@ var app = {
 		this.bindEvents();
 	},
 	bindEvents: function() {
-		document.addEventListener('deviceready', this.onDeviceReady, false);
-		//app.api_init_start();
+		//document.addEventListener('deviceready', this.onDeviceReady, false);
+		app.api_init_start();
 	},
 	onDeviceReady: function() {
 		app.api_init_start();
@@ -61,8 +61,8 @@ var app = {
 		return states[networkState];
 	},
 	gotConnection: function(){
-		var a = app.checkConnection();
-		if(a == 'fail'){return false;}
+		//var a = app.checkConnection();
+		//if(a == 'fail'){return false;}
 		return true;
 	},
 	refreshConnection: function(button){
@@ -247,6 +247,12 @@ var app = {
 			} else {
 				app.api_offline();
 			}
+		});
+		$$('#contact-form').on('form:success', function(e){
+			var xhr = e.detail.xhr;
+			var data = e.detail.data;
+			console.log(xhr);
+			console.log(data);
 		});
 		
 		//infinitescroll articles
