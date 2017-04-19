@@ -1,5 +1,6 @@
 if(!Array.prototype.indexOf){Array.prototype.indexOf=function(obj,fromIndex){if(fromIndex==null)fromIndex = 0;else if (fromIndex<0)fromIndex = Math.max(0, this.length + fromIndex);for(var i=fromIndex, j=this.length; i<j; i++)if(this[i]===obj) return i;return -1;};};
 function findIndexByKeyValue(arr,v){for(var i=0, j=arr.length; i<j; i+=1){if(arr[i] == v)return i;}return null;}
+function randId(){return Math.random().toString(36).substr(2, 10);}
 
 var	$$ = Dom7, myApp, mainView,
 	initilize_complete = false, index_articles_loaded = false,
@@ -226,10 +227,12 @@ var app = {
 						var article_image = '';
 						if(typeof article.image != 'undefined')
 							article_image = '<img src="https://www.beta.dpsdruk.pl/assets/articles/s3_'+article.image+'" class="img-responsive" />';
-						$$('#single_article_contents').html('<div class="content-block" style="margin-top:0px;"><h2>'+article.title+'</h2>'+article_image+article.content+'<p class="text-muted"><small><i>Dodano: '+article_date+'</i></small></p></div>');
+						$$('#single_article_contents').html('<div class="content-block"><p class="text-muted"><small><i>'+article_date+'</i></small></p><h2>'+article.title+'</h2>'+article_image+article.content+'</div>');
 						if(typeof article.videos != 'undefined'){
 							$$.each(article.videos, function(i,video){
-								$$('#single_article_contents').append('<video controls><source src="https://www.beta.dpsdruk.pl/assets/video/'+video+'" type="video/mp4"></video>');
+								var id = randId();
+								$$('#single_article_contents').append('<video id="'+id+'" class="video-js vjs-16-9 vjs-big-play-centered" controls preload="auto"><source src="https://www.beta.dpsdruk.pl/assets/video/'+video+'" type="video/mp4"></video>');
+								videojs(id);
 							});
 						}
 					},
