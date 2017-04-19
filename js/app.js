@@ -1,6 +1,6 @@
 if(!Array.prototype.indexOf){Array.prototype.indexOf=function(obj,fromIndex){if(fromIndex==null)fromIndex = 0;else if (fromIndex<0)fromIndex = Math.max(0, this.length + fromIndex);for(var i=fromIndex, j=this.length; i<j; i++)if(this[i]===obj) return i;return -1;};};
 function findIndexByKeyValue(arr,v){for(var i=0, j=arr.length; i<j; i+=1){if(arr[i] == v)return i;}return null;}
-function randId(){return Math.random().toString(36).substr(2, 10);}
+function randId(){return Math.random().toString(36).substr(2,10);}
 
 var	$$ = Dom7, myApp, mainView,
 	initilize_complete = false, index_articles_loaded = false,
@@ -11,7 +11,7 @@ var app = {
 	},
 	bindEvents: function(){
 		document.addEventListener('deviceready', this.onDeviceReady, false);
-		app.init();
+		//app.init();
 	},
 	onDeviceReady: function(){
 		app.init();
@@ -25,10 +25,9 @@ var app = {
 		return states[networkState];
 	},
 	gotConnection: function(){
-		//var a = app.checkConnection();
-		//if(a == 'fail'){return false;}
-		//return true;
-		return $$('#conn').prop('checked');
+		if(app.checkConnection() == 'fail')return false;
+		return true;
+		//return $$('#conn').prop('checked');
 	},
 	init: function(){
 		myApp = new Framework7({
@@ -231,7 +230,7 @@ var app = {
 						if(typeof article.videos != 'undefined'){
 							$$.each(article.videos, function(i,video){
 								var id = randId();
-								$$('#single_article_contents').append('<video id="'+id+'" class="video-js vjs-16-9 vjs-big-play-centered" controls preload="auto"><source src="https://www.beta.dpsdruk.pl/assets/video/'+video+'" type="video/mp4"></video>');
+								$$('#single_article_contents .content-block').append('<video id="'+id+'" class="video-js vjs-16-9 vjs-big-play-centered" controls preload="auto"><source src="https://www.beta.dpsdruk.pl/assets/video/'+video+'" type="video/mp4"></video>');
 								videojs(id);
 							});
 						}
