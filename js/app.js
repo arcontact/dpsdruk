@@ -4,7 +4,7 @@ function randId(){return Math.random().toString(36).substr(2,10);}
 
 var	$$ = Dom7, myApp, mainView,
 	initilize_complete = false, index_articles_loaded = false,
-	splash_articles = [], articles_limit = 10, articles_offset = articles_limit;
+	articles_limit = 10, articles_offset = articles_limit;
 var app = {
 	initialize: function(){
 		this.bindEvents();
@@ -90,7 +90,6 @@ var app = {
 						}
 					});
 					
-					splash_articles = response.articles;
 					initilize_complete = true;
 				},
 				error: function(xhr, status){
@@ -156,6 +155,17 @@ var app = {
 		}
 	},
 	listeners: function(){
+		myApp.onPageInit('offline', function(page){
+			if(app.gotConnection()){
+				mainView.router.loadPage('#index');
+			}
+		});
+		myApp.onPageInit('offline_contact', function(page){
+			if(app.gotConnection()){
+				mainView.router.loadPage('#index');
+			}
+		});
+		
 		myApp.onPageReinit('index', function(page){
 			if(!initilize_complete){
 				app.init();
