@@ -63,7 +63,8 @@ var app = {
 	gotConnection: function(){
 		//var a = app.checkConnection();
 		//if(a == 'fail'){return false;}
-		return true;
+		//return true;
+		return $$('#conn').prop('checked');
 	},
 	refreshConnection: function(button){
 		$$(button).html('<i class="material-icons fa-spin">&#xe5d5;</i> Sprawdzam...');
@@ -218,30 +219,17 @@ var app = {
 		}
 	},
 	listeners: function(){
-		$$(document).on('page:beforeinit', '.page[data-page="index"]', function (e) {
-			if(!app.gotConnection()){
-				app.api_offline();
-			}
+		$$(document).on('page:beforeinit', '.page[data-page="single_article"]', function(e){
+			$$('#single_article_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
+			var page = e.detail.page;
+			app.api_call('get_article/'+page.query.article_id, {key: app.settings.key}, 'single_article');
 		});
-		$$(document).on('page:beforeinit', '.page[data-page="single_article"]', function (e) {
-			if(app.gotConnection()){
-				$$('#single_article_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
-				var page = e.detail.page;
-				app.api_call('get_article/'+page.query.article_id, {key: app.settings.key}, 'single_article');
-			} else {
-				app.api_offline();
-			}
-		});
-		$$(document).on('page:afteranimation', '.page[data-page="single_category"]', function (e) {
-			if(app.gotConnection()){
-				$$('.page[data-page="single_category"].page-on-center .single_category_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
-				var page = e.detail.page;
-				current_category_id = page.query.category_id;
-				current_subcategory_id = page.query.subcategory_id;
-				app.api_call('index_products/'+page.query.subcategory_id, {key: app.settings.key}, 'single_category');
-			} else {
-				app.api_offline();
-			}
+		$$(document).on('page:afteranimation', '.page[data-page="single_category"]', function(e){
+			$$('.page[data-page="single_category"].page-on-center .single_category_contents').html('<div class="content-block" style="text-align:center"><span class="preloader"></span></div>');
+			var page = e.detail.page;
+			current_category_id = page.query.category_id;
+			current_subcategory_id = page.query.subcategory_id;
+			app.api_call('index_products/'+page.query.subcategory_id, {key: app.settings.key}, 'single_category');
 		});
 		$$('#contact-form').on('form:beforesend', function(e){
 			myApp.showPreloader();

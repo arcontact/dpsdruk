@@ -5,22 +5,24 @@
 .text-center{text-align:center;}
 .text-center .img-responsive{margin-left:auto; margin-right:auto;}
 .material-icons{vertical-align:middle;}
+.text-muted{color:#999;}
 #categories-list .list-block{font-size:13px;}
 #categories-list .list-block .list-group-title{height:auto; line-height:14px; font-size:14px; overflow:hidden; padding:10px 16px;}
 #categories-list .item-content, #categories-list .item-inner{min-height:initial;}
 #categories-list .item-title, #categories-list .list-block .list-group-title{white-space:normal;}
+#splash_articles .list-block{margin-bottom:15px;}
 .articles-list .list-block{font-size:14px; margin-bottom:14px;}
 .articles-list .list-block .item-subtitle{font-size:12px;}
 .fa-spin{-webkit-animation:fa-spin 2s infinite linear;animation:fa-spin 2s infinite linear;}
 @-webkit-keyframes fa-spin {
-  0% {-webkit-transform: rotate(0deg);transform: rotate(0deg);}
-  100% {-webkit-transform: rotate(359deg);transform: rotate(359deg);}
+  0% {-webkit-transform:rotate(0deg);transform:rotate(0deg);}
+  100% {-webkit-transform:rotate(359deg);transform:rotate(359deg);}
 }
 @keyframes fa-spin {
-  0% {-webkit-transform: rotate(0deg);transform: rotate(0deg);}
-  100% {-webkit-transform: rotate(359deg);transform: rotate(359deg);}
+  0% {-webkit-transform:rotate(0deg);transform:rotate(0deg);}
+  100% {-webkit-transform:rotate(359deg);transform:rotate(359deg);}
 }
-#splash_page{position:relative; margin-top:-56px; background-color:#e2001a; color:#fff; padding:56px 15px 5px 15px; border-bottom:2px solid #d00018;}
+.splash_page{position:relative; margin-top:-56px; background-color:#e2001a; color:#fff; padding:56px 15px 5px 15px; border-bottom:2px solid #d00018;}
 .navbar.logo-center .center{margin-left:auto; margin-right:auto;}
 .navbar.logo-center .right{margin-left:0px;}
 .single_category_contents .card{display:block; background-color:#e2001a; color:#fff;}
