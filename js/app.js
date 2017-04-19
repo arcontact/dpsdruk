@@ -15,7 +15,7 @@ var app = {
 	},
 	onDeviceReady: function(){
 		app.init();
-		document.addEventListener('offline', offline, false); //dokończyć
+		document.addEventListener('offline', app.offline, false); //dokończyć
 	},
 	checkConnection: function(){
 		if(typeof navigator.connection == 'undefined' || typeof navigator.connection.type == 'undefined') return 'fail';
