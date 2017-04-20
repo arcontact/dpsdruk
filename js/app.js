@@ -41,12 +41,12 @@ var app = {
 		this.bindEvents();
 	},
 	bindEvents: function(){
-		//document.addEventListener('deviceready', this.onDeviceReady, false);
-		app.init();
+		document.addEventListener('deviceready', this.onDeviceReady, false);
+		//app.init();
 	},
 	onDeviceReady: function(){
 		app.init();
-		document.addEventListener('offline', app.offline, false); //dokończyć
+		document.addEventListener('offline', app.offline, false);
 	},
 	checkConnection: function(){
 		if(typeof navigator.connection == 'undefined' || typeof navigator.connection.type == 'undefined') return 'fail';
@@ -56,9 +56,9 @@ var app = {
 		return states[networkState];
 	},
 	gotConnection: function(){
-		//if(app.checkConnection() == 'fail')return false;
-		//return true;
-		return $$('#conn').prop('checked');
+		if(app.checkConnection() == 'fail')return false;
+		return true;
+		//return $$('#conn').prop('checked');
 	},
 	init: function(){
 		myApp = new Framework7({
