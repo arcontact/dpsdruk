@@ -17,19 +17,14 @@ function downloadFile(url){
 		uri,
 		fileURL,
 		function(entry) {
-			console.log("download complete: " + entry.toURL());
+			myApp.alert("download complete: " + entry.toURL());
 		},
 		function(error) {
-			console.log("download error source " + error.source);
-			console.log("download error target " + error.target);
-			console.log("download error code" + error.code);
+			myApp.alert("download error source " + error.source);
+			myApp.alert("download error target " + error.target);
+			myApp.alert("download error code" + error.code);
 		},
-		false,
-		{
-			headers: {
-				"Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
-			}
-		}
+		true
 	);
 }
 
