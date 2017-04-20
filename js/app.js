@@ -386,7 +386,7 @@ var app = {
 	downloadFile: function(_uri, filename){
 		var fileTransfer = new FileTransfer();
 		var uri = encodeURI(_uri + filename);
-		var fileURL = '/' + filename;
+		var fileURL = filename;
 		fileTransfer.download(
 			uri,
 			fileURL,
