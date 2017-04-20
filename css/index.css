@@ -2,6 +2,7 @@
 .alert .content-block-title{margin-top:0px;}
 .alert .content-block {margin-bottom:0px;}
 .img-responsive{display:block; max-width:100%; height:auto;}
+.text-left{text-align:left;}
 .text-center{text-align:center;}
 .text-center .img-responsive{margin-left:auto; margin-right:auto;}
 .material-icons{vertical-align:middle;}
@@ -25,7 +26,12 @@
 .splash_page{position:relative; margin-top:-56px; background-color:#e2001a; color:#fff; padding:56px 15px 5px 15px; border-bottom:2px solid #d00018;}
 .navbar.logo-center .center{margin-left:auto; margin-right:auto;}
 .navbar.logo-center .right{margin-left:0px;}
-.single_category_contents .card{display:block; background-color:#e2001a; color:#fff;}
+.single_category_contents .card{display:block;}
+.single_category_contents .card-header{background-color:#e2001a;}
+.single_category_contents .card-content-inner{color:#000; font-size:14px;}
+.single_category_contents .card-footer{-webkit-justify-content:flex-start; justify-content:flex-start;}
 table.contact-table{width:100%;}
 table.contact-table td{vertical-align:top;}
 table.contact-table i{font-size:30px; margin:2px 10px 0 0; color:#b6b6b6;}
+.video-container{position:relative; padding-bottom:56.25%; padding-top:30px; height:0; overflow:hidden; margin-bottom:15px;}
+.video-container iframe, .video-container object, .video-container embed{position:absolute; top:0; left:0; width:100%; height:100%;}
