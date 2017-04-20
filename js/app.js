@@ -365,7 +365,7 @@ var app = {
 							html += '</ul></div>';
 							$$('.single_product_contents').append(html);
 							$$('.single_product_contents .files-list a').on('click',function(){
-								app.downloadFile('https://www.beta.dpsdruk.pl/assets/files/' + $$(this).data('filename'));
+								app.downloadFile('https://www.beta.dpsdruk.pl/assets/files/', $$(this).data('filename'));
 							});
 						}
 					},
@@ -383,10 +383,10 @@ var app = {
 			}
 		});
 	},
-	downloadFile: function(url){
-		myApp.alert("downloading: " + url);
+	downloadFile: function(_uri, filename){
 		var fileTransfer = new FileTransfer();
-		var uri = encodeURI(url);
+		var uri = encodeURI(_uri + filename);
+		var fileURL = '/' + filename;
 		fileTransfer.download(
 			uri,
 			fileURL,
