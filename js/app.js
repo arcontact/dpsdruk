@@ -10,23 +10,6 @@ function videourlToHTML(videourl){
 		return '<a href="'+videourl+'" class="external button button-fill button-raised color-blue">'+videourl+'</a>';
 	}
 }
-function downloadFile(url){
-	var fileTransfer = new FileTransfer();
-	var uri = encodeURI(url);
-	fileTransfer.download(
-		uri,
-		fileURL,
-		function(entry) {
-			myApp.alert("download complete: " + entry.toURL());
-		},
-		function(error) {
-			myApp.alert("download error source " + error.source);
-			myApp.alert("download error target " + error.target);
-			myApp.alert("download error code" + error.code);
-		},
-		true
-	);
-}
 
 var	$$ = Dom7, myApp, mainView,
 	initilize_complete = false, index_articles_loaded = false, categories = [],
@@ -382,7 +365,7 @@ var app = {
 							html += '</ul></div>';
 							$$('.single_product_contents').append(html);
 							$$('.single_product_contents .files-list a').on('click',function(){
-								downloadFile($$(this).data('filename'));
+								app.downloadFile('https://www.beta.dpsdruk.pl/assets/files/' + $$(this).data('filename'));
 							});
 						}
 					},
@@ -399,5 +382,23 @@ var app = {
 				app.offline();
 			}
 		});
+	},
+	downloadFile: function(url){
+		myApp.alert("downloading: " + url);
+		var fileTransfer = new FileTransfer();
+		var uri = encodeURI(url);
+		fileTransfer.download(
+			uri,
+			fileURL,
+			function(entry) {
+				myApp.alert("download complete: " + entry.toURL());
+			},
+			function(error) {
+				myApp.alert("download error source " + error.source);
+				myApp.alert("download error target " + error.target);
+				myApp.alert("download error code" + error.code);
+			},
+			true
+		);
 	},
 };
