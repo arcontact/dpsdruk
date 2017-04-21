@@ -13,7 +13,8 @@ function videourlToHTML(videourl){
 
 var	$$ = Dom7, myApp, mainView,
 	initilize_complete = false, index_articles_loaded = false, categories = [],
-	articles_limit = 10, articles_offset = articles_limit;
+	articles_limit = 10, articles_offset = articles_limit,
+	baseurl = 'https://www.beta.dpsdruk.pl/';
 var app = {
 	initialize: function(){
 		this.bindEvents();
@@ -66,7 +67,7 @@ var app = {
 		if(app.gotConnection()){
 			myApp.showPreloader('Ładuję aplikację...');
 			$$.ajax({
-				url: 'https://www.beta.dpsdruk.pl/api/init/' + articles_limit,
+				url: baseurl+'api/init/'+articles_limit,
 				crossDomain: true,
 				dataType: 'json',
 				data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
@@ -76,7 +77,7 @@ var app = {
 						var article_date = moment(article.date).format('LL');
 						var article_image;
 						if(typeof article.image != 'undefined'){
-							article_image = 'https://www.beta.dpsdruk.pl/assets/articles/s1_'+article.image;
+							article_image = baseurl+'assets/articles/s1_'+article.image;
 						} else {
 							article_image = 'img/noimage200x104.jpg';
 						}
@@ -99,11 +100,75 @@ var app = {
 						}
 					});
 					
+					$$('.page[data-page="about"] .navbar .center').text(response.about.title);
+					$$('.page[data-page="about"] .page-content').append('<div class="content-block">'+response.about.content+'</div>');
+					if(typeof response.about.sections != 'undefined'){
+						$$.each(response.about.sections,function(i,section){
+							$$('.page[data-page="about"] .page-content').append('<div class="content-block-title">'+section.title+'</div><div class="content-block">'+section.content+'</div>');
+							
+							if(typeof section.galleries != 'undefined'){
+								var sectionPhotoBrowsers = [];
+								$$.each(section.galleries, function(i,gallery){
+									var _photos = [];
+									var id = randId();
+									$$.each(gallery.photos, function(j,photo){
+										if(j == 0){
+											$$('.page[data-page="about"] .page-content').append('<div class="content-block"><a class="card pb" data-id="'+id+'"><div style="background-image:url('+baseurl+'assets/media/s4_'+photo+')" valign="bottom" class="card-header color-white no-border"><div class="chip"><div class="chip-media"><i class="material-icons">&#xe413;</i></div><div class="card-label">'+gallery.photos.length+'</div></div></div><div class="card-content"><div class="card-content-inner">'+gallery.title+'</div></div></a></div>');
+										}
+										_photos.push(baseurl+'assets/media/s4_'+photo);
+									});
+									var myPhotoBrowser = myApp.photoBrowser({
+										photos: _photos,
+										ofText: 'z',
+										backLinkText: 'Powrót',
+										theme: 'dark',
+										lazyLoading: true,
+										lazyLoadingInPrevNext: true
+									});
+									sectionPhotoBrowsers.push({
+										id: id,
+										pb: myPhotoBrowser
+									});
+								});
+								$$('.pb').on('click', function(){
+									var id = $$(this).data('id');
+									$$.each(sectionPhotoBrowsers, function(i, _pb){
+										if(id == _pb.id){
+											_pb.pb.open();
+										}
+									});
+								});
+							}
+							if(typeof section.videos != 'undefined'){
+								$$.each(section.videos, function(i,video){
+									var id = randId();
+									$$('.page[data-page="about"] .page-content').append('<div class="content-block"><video id="'+id+'" class="video-js vjs-16-9 vjs-big-play-centered" controls preload="auto"><source src="'+baseurl+'assets/video/'+video+'" type="video/mp4"></video></div>');
+									videojs(id);
+								});
+							}
+							if(typeof section.videourls != 'undefined'){
+								$$.each(section.videourls, function(i,videourl){
+									var videourlHTML = videourlToHTML(videourl);
+									$$('.page[data-page="about"] .page-content').append('<div class="content-block">'+videourlHTML+'</div>');
+								});
+							}
+							if(typeof section.files != 'undefined'){
+								var html = '<div class="list-block media-list"><ul>';
+								$$.each(section.files, function(i,_file){
+									html += '<li><a href="'+baseurl+'assets/files/'+_file.filename+'" class="external item-link item-content"><div class="item-media"><img src="img/filetypes/'+_file.type+'.png" width="30" height="30"></div><div class="item-inner"><div class="item-title">'+_file.title+'</div></div></a></li>';
+								});
+								html += '</ul></div>';
+								$$('.page[data-page="about"] .page-content').append('<div class="content-block">'+html+'</div>');
+							}
+						});
+					}
+					$$('.page[data-page="about"] .page-content .content-block a').addClass('external');
+					
 					initilize_complete = true;
 					categories = response.categories;
 				},
 				error: function(xhr, status){
-					myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale wystąpił błąd komunikacji ze stroną<br /><a href="https://dpsdruk.pl" class="external">www.dpsdruk.pl</a></div>', '', function(){
+					myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale wystąpił błąd komunikacji ze stroną<br /><a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '', function(){
 						mainView.router.load({
 							url: 'offline_contact.html',
 							pushState: false,
@@ -176,6 +241,10 @@ var app = {
 		$$(document).on('page:init', function(e){
 			if(!app.gotConnection() && mainView.activePage.name != 'offline' && mainView.activePage.name != 'offline_contact'){
 				app.offline();
+			} else {
+				if(mainView.activePage.name == 'contact'){
+					$$('#contact-form').attr('action', baseurl+'api/contact_form?key=e547a2036c6faffc2859e132e7eee66f');
+				}
 			}
 		});
 		myApp.onPageAfterAnimation('offline', function(page){
@@ -203,7 +272,7 @@ var app = {
 				setTimeout(function(){
 					if(app.gotConnection()){
 						$$.ajax({
-							url: 'https://www.beta.dpsdruk.pl/api/index_articles/' + articles_limit + '/' + articles_offset,
+							url: baseurl+'api/index_articles/' + articles_limit + '/' + articles_offset,
 							crossDomain: true,
 							dataType: 'json',
 							data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
@@ -219,7 +288,7 @@ var app = {
 									var article_date = moment(article.date).format('LL');
 									var article_image;
 									if(typeof article.image != 'undefined')
-										article_image = 'https://www.beta.dpsdruk.pl/assets/articles/s1_'+article.image;
+										article_image = baseurl+'assets/articles/s1_'+article.image;
 									else
 										article_image = 'img/noimage200x104.jpg';
 									html += '<li><a href="single_article.html?article_id='+article.id+'" class="item-link item-content"><div class="item-media"><img data-src="'+article_image+'" class="lazy" width="80" height="42" /></div><div class="item-inner"><div class="item-title-row"><div class="item-title">'+article.article_translation_title+'</div></div><div class="item-text"><small>'+article_date+'</small></div></div></a></li>';
@@ -230,7 +299,7 @@ var app = {
 								myApp.initImagesLazyLoad($$('.page[data-page="index_articles"]'));
 							},
 							error: function(xhr, status){
-								myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać aktualności ze strony <a href="https://dpsdruk.pl" class="external">www.dpsdruk.pl</a></div>', '', function(){
+								myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać aktualności ze strony <a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '', function(){
 									mainView.router.loadPage('offline_contact.html');
 								});
 							}
@@ -246,7 +315,7 @@ var app = {
 			if(app.gotConnection()){
 				myApp.showPreloader('Ładuję aktualność...');
 				$$.ajax({
-					url: 'https://www.beta.dpsdruk.pl/api/get_article/' + page.query.article_id,
+					url: baseurl+'api/get_article/' + page.query.article_id,
 					crossDomain: true,
 					dataType: 'json',
 					data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
@@ -255,18 +324,65 @@ var app = {
 						var article_date = moment(article.date).format('LLLL');
 						var article_image = '';
 						if(typeof article.image != 'undefined')
-							article_image = '<img src="https://www.beta.dpsdruk.pl/assets/articles/s3_'+article.image+'" class="img-responsive" />';
+							article_image = '<img src="'+baseurl+'assets/articles/s3_'+article.image+'" class="img-responsive" />';
 						$$('#single_article_contents').html('<div class="content-block"><p class="text-muted"><small><i>'+article_date+'</i></small></p><h2>'+article.title+'</h2>'+article_image+article.content+'</div>');
+						if(typeof article.galleries != 'undefined'){
+							var photoBrowsers = [];
+							$$.each(article.galleries, function(i,gallery){
+								var _photos = [];
+								var id = randId();
+								$$.each(gallery.photos, function(j,photo){
+									if(j == 0){
+										$$('#single_article_contents .content-block').append('<a class="card pb" data-id="'+id+'"><div style="background-image:url('+baseurl+'assets/media/s4_'+photo+')" valign="bottom" class="card-header color-white no-border"><div class="chip"><div class="chip-media"><i class="material-icons">&#xe413;</i></div><div class="card-label">'+gallery.photos.length+'</div></div></div><div class="card-content"><div class="card-content-inner">'+gallery.title+'</div></div></a>');
+									}
+									_photos.push(baseurl+'assets/media/s4_'+photo);
+								});
+								var myPhotoBrowser = myApp.photoBrowser({
+									photos: _photos,
+									ofText: 'z',
+									backLinkText: 'Powrót',
+									theme: 'dark',
+									lazyLoading: true,
+									lazyLoadingInPrevNext: true
+								});
+								photoBrowsers.push({
+									id: id,
+									pb: myPhotoBrowser
+								});
+							});
+							$$('.pb').on('click', function(){
+								var id = $$(this).data('id');
+								$$.each(photoBrowsers, function(i, _pb){
+									if(id == _pb.id){
+										_pb.pb.open();
+									}
+								});
+							});
+						}
 						if(typeof article.videos != 'undefined'){
 							$$.each(article.videos, function(i,video){
 								var id = randId();
-								$$('#single_article_contents .content-block').append('<video id="'+id+'" class="video-js vjs-16-9 vjs-big-play-centered" controls preload="auto"><source src="https://www.beta.dpsdruk.pl/assets/video/'+video+'" type="video/mp4"></video>');
+								$$('#single_article_contents .content-block').append('<video id="'+id+'" class="video-js vjs-16-9 vjs-big-play-centered" controls preload="auto"><source src="'+baseurl+'assets/video/'+video+'" type="video/mp4"></video>');
 								videojs(id);
 							});
 						}
+						if(typeof article.videourls != 'undefined'){
+							$$.each(article.videourls, function(i,videourl){
+								var videourlHTML = videourlToHTML(videourl);
+								$$('#single_article_contents .content-block').append(videourlHTML);
+							});
+						}
+						if(typeof article.files != 'undefined'){
+							var html = '<div class="list-block media-list"><ul>';
+							$$.each(article.files, function(i,_file){
+								html += '<li><a href="'+baseurl+'assets/files/'+_file.filename+'" class="external item-link item-content"><div class="item-media"><img src="img/filetypes/'+_file.type+'.png" width="30" height="30"></div><div class="item-inner"><div class="item-title">'+_file.title+'</div></div></a></li>';
+							});
+							html += '</ul></div>';
+							$$('#single_article_contents .content-block').append(html);
+						}
 					},
 					error: function(xhr, status){
-						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać aktualności ze strony <a href="https://dpsdruk.pl" class="external">www.dpsdruk.pl</a></div>', '', function(){
+						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać aktualności ze strony <a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '', function(){
 							mainView.router.loadPage('offline_contact.html');
 						});
 					},
@@ -282,7 +398,7 @@ var app = {
 			if(app.gotConnection()){
 				myApp.showPreloader('Ładuję produkty...');
 				$$.ajax({
-					url: 'https://www.beta.dpsdruk.pl/api/index_products/' + page.query.subcategory_id,
+					url: baseurl+'api/index_products/' + page.query.subcategory_id,
 					crossDomain: true,
 					dataType: 'json',
 					data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
@@ -298,14 +414,14 @@ var app = {
 						});
 						var html = '<div class="row">';
 						$$.each(response, function(i, product){
-							var product_image = String(product.image) != 'null' ? 'https://www.beta.dpsdruk.pl/assets/producers/s6_'+product.image : 'img/noimage100x100.png';
+							var product_image = String(product.image) != 'null' ? baseurl+'assets/producers/s6_'+product.image : 'img/noimage100x100.png';
 							html += '<div class="col-100 tablet-50"><a href="single_product.html?product_id='+product.id+'" class="card text-center"><div class="card-header no-border"><img src="'+product_image+'" alt="" class="img-responsive" /></div><div class="card-content"><div class="card-content-inner"><p>'+product.symbol+'</p><div class="chip"><div class="chip-label">'+product.price_m2+'</div></div></div></div></a></div>';
 						});
 						html += '</div>';
 						$$('.single_category_contents').append(html);
 					},
 					error: function(xhr, status){
-						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać produktów ze strony <a href="https://dpsdruk.pl" class="external">www.dpsdruk.pl</a></div>', '', function(){
+						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać produktów ze strony <a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '', function(){
 							mainView.router.loadPage('offline_contact.html');
 						});
 					},
@@ -321,7 +437,7 @@ var app = {
 			if(app.gotConnection()){
 				myApp.showPreloader('Ładuję produkt...');
 				$$.ajax({
-					url: 'https://www.beta.dpsdruk.pl/api/get_product/' + page.query.product_id,
+					url: baseurl+'api/get_product/' + page.query.product_id,
 					crossDomain: true,
 					dataType: 'json',
 					data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
@@ -331,23 +447,77 @@ var app = {
 						'<h2>'+product.title+'</h2>'+
 						'<div class="text-center">';
 						if(product.can_calculate){
-							html += '<div class="chip"><div class="chip-label">'+product.price_m2+'</div></div><p><a href="#" class="button button-fill button-raised text-left"><i class="material-icons">&#xe147;</i> Wykonaj kalkulację</a></p>';
+							html += '<div class="chip"><div class="chip-label">'+product.price_m2+'</div></div><p><a href="#calculator?product_id='+product.id+'" class="button button-fill button-raised text-left"><i class="material-icons">&#xE854;</i> Wykonaj kalkulację</a></p>';
 						} else {
-							html += '<div class="chip"><div class="chip-label">Na zamówienie</div></div>';
+							html += '<div class="chip"><div class="chip-label">Produkt dostępny na zamówienie.</div></div>';
 						}
 						html += '</div>';
-						
-						if(typeof product.producer_url != 'undefined')
-							html += '<p><a href="'+product.producer_url+'" class="button button-fill button-raised color-blue text-left external"><i class="material-icons">&#xe157;</i> '+product.producer_url+'</a></p>';
-						
 						html += product.content.replace(/<a(\s[^>]*)?>/ig, '').replace(/<\/a>/ig, '');
+						html += '<div class="clearfix"></div>';
+						if(typeof product.producer_url != 'undefined')
+							html += '<p><small class="text-muted">STRONA PRODUCENTA:</small><a href="'+product.producer_url+'" class="button button-fill button-raised color-blue text-left external"><i class="material-icons">&#xe157;</i> '+product.producer_url+'</a></p>';
 						html += '</div>';
 						$$('.single_product_contents').html(html);
-						
+						$$('.single_product_contents img').each(function(){
+							$$(this).attr('src', baseurl.substring(0, baseurl.length-1) + $$(this).attr('src').replace(baseurl,""));
+						});
+						if(typeof product.galleries != 'undefined'){
+							var photoBrowsers = [];
+							$$.each(product.galleries, function(i,gallery){
+								var _photos = [];
+								var id = randId();
+								$$.each(gallery.photos, function(j,photo){
+									if(j == 0){
+										$$('.single_product_contents .content-block').append('<a class="card pb" data-id="'+id+'"><div style="background-image:url('+baseurl+'assets/media/s4_'+photo+')" valign="bottom" class="card-header color-white no-border"><div class="chip"><div class="chip-media"><i class="material-icons">&#xe413;</i></div><div class="card-label">'+gallery.photos.length+'</div></div></div><div class="card-content"><div class="card-content-inner">'+gallery.title+'</div></div></a>');
+									}
+									_photos.push(baseurl+'assets/media/s4_'+photo);
+								});
+								var myPhotoBrowser = myApp.photoBrowser({
+									photos: _photos,
+									ofText: 'z',
+									backLinkText: 'Powrót',
+									theme: 'dark',
+									lazyLoading: true,
+									lazyLoadingInPrevNext: true
+								});
+								photoBrowsers.push({
+									id: id,
+									pb: myPhotoBrowser
+								});
+							});
+							$$('.pb[data-id]').on('click', function(){
+								var id = $$(this).data('id');
+								$$.each(photoBrowsers, function(i, _pb){
+									if(id == _pb.id){
+										_pb.pb.open();
+									}
+								});
+							});
+						}
+						if(typeof product.photos != 'undefined'){
+							var _photos = [];
+							$$.each(product.photos, function(i,photo){
+								if(i == 0){
+									$$('.single_product_contents .content-block').append('<a class="card pb medias"><div style="background-image:url('+baseurl+'assets/media/s4_'+photo+')" valign="bottom" class="card-header color-white no-border"><div class="chip"><div class="chip-media"><i class="material-icons">&#xe413;</i></div><div class="card-label">'+product.photos.length+'</div></div></div></a>');
+								}
+								_photos.push(baseurl+'assets/media/s4_'+photo);
+							});
+							var myPhotoBrowser = myApp.photoBrowser({
+								photos: _photos,
+								ofText: 'z',
+								backLinkText: 'Powrót',
+								theme: 'dark',
+								lazyLoading: true,
+								lazyLoadingInPrevNext: true
+							});
+							$$('.pb.medias').on('click', function(){
+								myPhotoBrowser.open();
+							});
+						}
 						if(typeof product.videos != 'undefined'){
 							$$.each(product.videos, function(i,video){
 								var id = randId();
-								$$('.single_product_contents .content-block').append('<video id="'+id+'" class="video-js vjs-16-9 vjs-big-play-centered" controls preload="auto"><source src="https://www.beta.dpsdruk.pl/assets/video/'+video+'" type="video/mp4"></video>');
+								$$('.single_product_contents .content-block').append('<video id="'+id+'" class="video-js vjs-16-9 vjs-big-play-centered" controls preload="auto"><source src="'+baseurl+'assets/video/'+video+'" type="video/mp4"></video>');
 								videojs(id);
 							});
 						}
@@ -358,19 +528,16 @@ var app = {
 							});
 						}
 						if(typeof product.files != 'undefined'){
-							var html = '<div class="list-block media-list files-list"><ul>';
+							var html = '<div class="list-block media-list"><ul>';
 							$$.each(product.files, function(i,_file){
-								html += '<li><a href="#" data-filename="'+_file.filename+'" class="item-link item-content"><div class="item-inner"><div class="item-title"><i class="material-icons">&#xe8ae;</i> '+_file.title+'</div></div></a></li>';
+								html += '<li><a href="'+baseurl+'assets/files/'+_file.filename+'" class="external item-link item-content"><div class="item-media"><img src="img/filetypes/'+_file.type+'.png" width="30" height="30"></div><div class="item-inner"><div class="item-title">'+_file.title+'</div></div></a></li>';
 							});
 							html += '</ul></div>';
 							$$('.single_product_contents').append(html);
-							$$('.single_product_contents .files-list a').on('click',function(){
-								app.downloadFile('https://www.beta.dpsdruk.pl/assets/files/', $$(this).data('filename'));
-							});
 						}
 					},
 					error: function(xhr, status){
-						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać produktu ze strony <a href="https://dpsdruk.pl" class="external">www.dpsdruk.pl</a></div>', '', function(){
+						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać produktu ze strony <a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '', function(){
 							mainView.router.loadPage('offline_contact.html');
 						});
 					},
@@ -382,23 +549,21 @@ var app = {
 				app.offline();
 			}
 		});
-	},
-	downloadFile: function(_uri, filename){
-		var fileTransfer = new FileTransfer();
-		var uri = encodeURI(_uri + filename);
-		var fileURL = filename;
-		fileTransfer.download(
-			uri,
-			fileURL,
-			function(entry) {
-				myApp.alert("download complete: " + entry.toURL());
-			},
-			function(error) {
-				myApp.alert("download error source " + error.source);
-				myApp.alert("download error target " + error.target);
-				myApp.alert("download error code" + error.code);
-			},
-			true
-		);
+		$$('#contact-form').on('form:beforesend', function(e){
+			myApp.showPreloader();
+		});
+		$$('#contact-form').on('form:success', function(e){
+			myApp.hidePreloader();
+			var xhr = e.detail.xhr;
+			var response = JSON.parse(xhr.response);
+			myApp.alert(response.message);
+			if(response.type == 'success'){
+				$$('#contact-form')[0].reset();
+			}
+		});
+		$$('#contact-form').on('form:error', function(e){
+			myApp.hidePreloader();
+			myApp.alert('Przepraszamy ale wystąpił błąd podczas wysyłania formularza.');
+		});
 	},
 };

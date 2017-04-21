@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="theme-color" content="#ec1b2e">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self' http: https: file: data: gap: 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; font-src *; img-src 'self' data: https:;" />
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self' http: https: file: data: gap: 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; font-src *; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' file: 'unsafe-eval'" />
 	<link rel="stylesheet" type="text/css" href="css/framework7.material.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/framework7.material.colors.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/material-icons.css" />
@@ -28,8 +28,9 @@
 	</div>
 	<div class="panel panel-right panel-reveal">
 		<div class="content-block">
-			<p><a href="#about" class="close-panel">Informacje</a></p>
-			<p><a href="#services" class="close-panel">Kalkulator</a></p>
+			<p><a href="#index_articles" class="close-panel">Aktualności</a></p>
+			<p><a href="#about" class="close-panel">Jakość i technologia</a></p>
+			<p><a href="https://www.beta.dpsdruk.pl/kalkulator" class="close-panel external">Kalkulator</a></p>
 			<p><a href="#contact" class="close-panel">Kontakt</a></p>
 		</div>
 		<div  id="categories-list"></div>
@@ -89,9 +90,7 @@
 									<i class="icon icon-back"></i>
 								</a>
 							</div>
-							<div class="center">
-								About
-							</div>
+							<div class="center"></div>
 							<div class="right">
 								<a href="#" data-panel="right" class="link open-panel">
 									<i class="icon icon-bars"></i>
@@ -99,36 +98,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="page-content hide-bars-on-scroll">
-						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
-						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
-						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
-						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
-						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
-						<p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p><p>About page</p>
-					</div>
-				</div>
-				<div class="page cached navbar-fixed" data-page="services">
-					<div class="navbar">
-						<div class="navbar-inner">
-							<div class="left">
-								<a href="#index" class="link icon-only back">
-									<i class="icon icon-back"></i>
-								</a>
-							</div>
-							<div class="center">
-								Services
-							</div>
-							<div class="right">
-								<a href="#" data-panel="right" class="link open-panel">
-									<i class="icon icon-bars"></i>
-								</a>
-							</div>
-						</div>
-					</div>
-					<div class="page-content hide-bars-on-scroll">
-						<p>Services page</p>
-					</div>
+					<div class="page-content hide-bars-on-scroll"></div>
 				</div>
 				<div class="page cached navbar-fixed" data-page="contact">
 					<div class="navbar">
@@ -177,7 +147,7 @@
 							</table>
 						</div>
 						<div class="content-block-title">SKONTAKTUJ SIĘ Z NAMI</div>
-						<form action="https://www.beta.dpsdruk.pl/api/contact_form?key=e547a2036c6faffc2859e132e7eee66f" class="list-block store-data ajax-submit" method="POST" id="contact-form" style="margin-bottom:10px;">
+						<form class="list-block store-data ajax-submit" method="POST" id="contact-form" style="margin-bottom:10px;">
 							<ul>
 								<li>
 									<div class="item-content">

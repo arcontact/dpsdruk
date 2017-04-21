@@ -7,6 +7,7 @@
 .text-center .img-responsive{margin-left:auto; margin-right:auto;}
 .material-icons{vertical-align:middle;}
 .text-muted{color:#999;}
+.clearfix::after{display:block;content:"";clear:both;}
 #categories-list .list-block{font-size:13px;}
 #categories-list .list-block .list-group-title{height:auto; line-height:14px; font-size:14px; overflow:hidden; padding:10px 16px;}
 #categories-list .item-content, #categories-list .item-inner{min-height:initial;}
@@ -35,3 +36,9 @@ table.contact-table td{vertical-align:top;}
 table.contact-table i{font-size:30px; margin:2px 10px 0 0; color:#b6b6b6;}
 .video-container{position:relative; padding-bottom:56.25%; padding-top:30px; height:0; overflow:hidden; margin-bottom:15px;}
 .video-container iframe, .video-container object, .video-container embed{position:absolute; top:0; left:0; width:100%; height:100%;}
+.single_product_contents .list-block .item-media{min-width:30px;}
+.single_product_contents  .list-block .item-media + .item-inner{margin-left:6px;}
+.card.pb{display:block; margin-left:0px; margin-right:0px;}
+.card.pb .card-header{height:40vw; max-height:150px; background-size:cover; background-position:center; background-repeat:no-repeat;}
+.card.pb .chip, .card.pb .card-content{background-color:#e2001a; color:#fff;}
+.content-block{word-wrap:break-word;}
