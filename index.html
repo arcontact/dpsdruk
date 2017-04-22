@@ -13,7 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="css/material-icons.css" />
 	<link rel="stylesheet" type="text/css" href="css/video-js.css" />
 	<link rel="stylesheet" type="text/css" href="css/index.css" />
-	<title>DPSdruk.pl Digital Printing Solutions</title>
+	<title>Digital Printing Solutions</title>
 </head>
 <body class="layout-white theme-red">
 	<div class="panel-overlay"></div>
@@ -30,7 +30,7 @@
 		<div class="content-block">
 			<p><a href="#index_articles" class="close-panel">Aktualności</a></p>
 			<p><a href="#about" class="close-panel">Jakość i technologia</a></p>
-			<p><a href="https://www.beta.dpsdruk.pl/kalkulator" class="close-panel external">Kalkulator</a></p>
+			<p><a href="#calculator" class="close-panel">Kalkulator</a></p>
 			<p><a href="#contact" class="close-panel">Kontakt</a></p>
 		</div>
 		<div  id="categories-list"></div>
@@ -100,6 +100,124 @@
 					</div>
 					<div class="page-content hide-bars-on-scroll"></div>
 				</div>
+				<div class="page cached navbar-fixed" data-page="calculator">
+					<div class="navbar">
+						<div class="navbar-inner">
+							<div class="left">
+								<a href="#index" class="link icon-only back">
+									<i class="icon icon-back"></i>
+								</a>
+							</div>
+							<div class="center">
+								Kalkulator
+							</div>
+							<div class="right">
+								<a href="#" data-panel="right" class="link open-panel">
+									<i class="icon icon-bars"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="page-content hide-bars-on-scroll">
+						<div class="content-block">
+							<p>Oblicz koszt wydruku korzystając z poniższego kalkulatora.</p>
+							<p>Pełna wersja kalkulatora z możliwością wgrania plików i dokonania płatności on-line znajduje się na naszej stronie internetowej: <a href="https://www.dpsdruk.pl/kalkulator" class="external">www.dpsdruk.pl/kalkulator</a></p>
+						</div>
+						<form class="list-block ajax-submit" method="POST" id="calculator-form">
+							<ul>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Technologia druku</div>
+											<div class="item-input">
+												<select name="machine_id" id="machine_id" required></select>
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Grupa produktów</div>
+											<div class="item-input">
+												<select name="category_id" id="category_id" required></select>
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Zastosowanie</div>
+											<div class="item-input">
+												<select name="subcategory_id" id="subcategory_id" required></select>
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Produkt</div>
+											<div class="item-input">
+												<select name="product_id" id="product_id" required></select>
+											</div>
+										</div>
+									</div>
+								</li>
+								<div id="product_info"></div>
+								<div id="laminates"></div>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Szerokość w mm</div>
+											<div class="item-input">
+												<input type="number" name="width" id="width" min="1" required />
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Wysokość w mm</div>
+											<div class="item-input">
+												<input type="number" name="height" id="height" min="1" required />
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Nakład</div>
+											<div class="item-input">
+												<input type="number" name="quantity" id="quantity" min="1" required />
+											</div>
+										</div>
+									</div>
+								</li>
+								<div id="services"></div>
+								<!--<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<button type="submit" class="button button-fill button-raised color-blue" style="width:100%;">Kalkuluj</button>
+										</div>
+									</div>
+								</li>-->
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div id="calculator-response">
+												<small>Wypełnij poprawnie wszystkie pola aby dokonać kalkulacji. Pola oznaczone * są wymagane.</small>
+											</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</form>
+					</div>
+				</div>
 				<div class="page cached navbar-fixed" data-page="contact">
 					<div class="navbar">
 						<div class="navbar-inner">
@@ -153,7 +271,7 @@
 									<div class="item-content">
 										<div class="item-media"><i class="material-icons">&#xe7fd;</i></div>
 										<div class="item-inner">
-											<div class="item-title label">Imię i nazwisko</div>
+											<!-- <div class="item-title label">Imię i nazwisko</div> -->
 											<div class="item-input">
 												<input type="text" name="name" placeholder="Imię i nazwisko" required />
 											</div>
@@ -164,7 +282,7 @@
 									<div class="item-content">
 										<div class="item-media"><i class="material-icons">&#xe0cd;</i></div>
 										<div class="item-inner">
-											<div class="item-title label">Numer telefonu</div>
+											<!-- <div class="item-title label">Numer telefonu</div> -->
 											<div class="item-input">
 												<input type="number" name="phone" placeholder="Numer telefonu" required />
 											</div>
@@ -175,7 +293,7 @@
 									<div class="item-content">
 										<div class="item-media"><i class="material-icons">&#xe0be;</i></div>
 										<div class="item-inner">
-											<div class="item-title label">Adres e-mail</div>
+											<!-- <div class="item-title label">Adres e-mail</div> -->
 											<div class="item-input">
 												<input type="email" name="email" placeholder="Adres e-mail" required />
 											</div>
@@ -186,7 +304,7 @@
 									<div class="item-content">
 										<div class="item-media"><i class="material-icons">&#xe0b7;</i></div>
 										<div class="item-inner">
-											<div class="item-title label">Wiadomość</div>
+											<!-- <div class="item-title label">Wiadomość</div> -->
 											<div class="item-input">
 												<textarea class="resizable" name="message" placeholder="Wiadomość" required></textarea>
 											</div>
@@ -233,12 +351,13 @@
 			</div>
 		</div>
     </div>
-	<script type="text/javascript" src="cordova.js"></script>
+	<!--<script type="text/javascript" src="cordova.js"></script>-->
 	<script type="text/javascript" src="js/framework7.min.js"></script>
 	<script type="text/javascript" src="js/moment.min.js"></script>
 	<script type="text/javascript" src="js/moment.pl.js"></script>
 	<script type="text/javascript" src="js/video.min.js"></script>
 	<script type="text/javascript" src="js/videojs_pl.js"></script>
+	<script type="text/javascript" src="js/spin.min.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 		app.initialize();

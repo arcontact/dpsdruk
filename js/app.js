@@ -1,11 +1,23 @@
 if(!Array.prototype.indexOf){Array.prototype.indexOf=function(obj,fromIndex){if(fromIndex==null)fromIndex = 0;else if (fromIndex<0)fromIndex = Math.max(0, this.length + fromIndex);for(var i=fromIndex, j=this.length; i<j; i++)if(this[i]===obj) return i;return -1;};};
 function findIndexByKeyValue(arr,v){for(var i=0, j=arr.length; i<j; i+=1){if(arr[i] == v)return i;}return null;}
 function randId(){return Math.random().toString(36).substr(2,10);}
+String.prototype.escapeDiacritics = function(){
+    return this.replace(/ą/g, 'a').replace(/Ą/g, 'A')
+        .replace(/ć/g, 'c').replace(/Ć/g, 'C')
+        .replace(/ę/g, 'e').replace(/Ę/g, 'E')
+        .replace(/ł/g, 'l').replace(/Ł/g, 'L')
+        .replace(/ń/g, 'n').replace(/Ń/g, 'N')
+        .replace(/ó/g, 'o').replace(/Ó/g, 'O')
+        .replace(/ś/g, 's').replace(/Ś/g, 'S')
+        .replace(/ż/g, 'z').replace(/Ż/g, 'Z')
+        .replace(/ź/g, 'z').replace(/Ź/g, 'Z');
+}
 function videourlToHTML(videourl){
 	var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
 	var match = videourl.match(regExp);
 	if(match && match[2].length == 11) {
-		return '<div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/'+match[2]+'?rel=0" frameborder="0" allowfullscreen></iframe></div>';
+		//return '<div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/'+match[2]+'?rel=0" frameborder="0" allowfullscreen></iframe></div>';
+		return '<div class="embed-responsive embed-responsive-16by9"><div class="embed-responsive-item youtube-mobile" data-embed="'+match[2]+'"><div class="play-button"></div></div></div>';
 	} else {
 		return '<a href="'+videourl+'" class="external button button-fill button-raised color-blue">'+videourl+'</a>';
 	}
@@ -20,8 +32,8 @@ var app = {
 		this.bindEvents();
 	},
 	bindEvents: function(){
-		document.addEventListener('deviceready', this.onDeviceReady, false);
-		//app.init();
+		//document.addEventListener('deviceready', this.onDeviceReady, false);
+		app.init();
 	},
 	onDeviceReady: function(){
 		app.init();
@@ -35,9 +47,9 @@ var app = {
 		return states[networkState];
 	},
 	gotConnection: function(){
-		if(app.checkConnection() == 'fail')return false;
-		return true;
-		//return $$('#conn').prop('checked');
+		//if(app.checkConnection() == 'fail')return false;
+		//return true;
+		return $$('#conn').prop('checked');
 	},
 	init: function(){
 		myApp = new Framework7({
@@ -50,7 +62,7 @@ var app = {
 			material: true,
 			notificationCloseButtonText: 'Zamknij',
 			modalPreloaderTitle: '',
-			modalTitle: 'DPSdruk.pl',
+			modalTitle: '',
 			smartSelectBackText: 'Powrót',
 			smartSelectPopupCloseText: 'Zamknij',
 			smartSelectPickerCloseText: 'Zrobione',
@@ -151,6 +163,19 @@ var app = {
 									var videourlHTML = videourlToHTML(videourl);
 									$$('.page[data-page="about"] .page-content').append('<div class="content-block">'+videourlHTML+'</div>');
 								});
+								if($$('.youtube-mobile[data-embed]').length){
+									$$(".youtube-mobile[data-embed]").each(function(){
+										var t = $$(this), id = t.data('embed');
+										var image = new Image();
+										image.src = "https://img.youtube.com/vi/"+ id +"/sddefault.jpg";
+										image.addEventListener("load",function(){
+											t.append(image);
+										});
+										t.on('click',function(){
+											t.html('<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="https://www.youtube.com/embed/'+id+'?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe></div>');
+										});
+									});
+								}
 							}
 							if(typeof section.files != 'undefined'){
 								var html = '<div class="list-block media-list"><ul>';
@@ -163,6 +188,9 @@ var app = {
 						});
 					}
 					$$('.page[data-page="about"] .page-content .content-block a').addClass('external');
+					
+					//kalkulator
+					app.init_calculator(response);
 					
 					initilize_complete = true;
 					categories = response.categories;
@@ -447,7 +475,7 @@ var app = {
 						'<h2>'+product.title+'</h2>'+
 						'<div class="text-center">';
 						if(product.can_calculate){
-							html += '<div class="chip"><div class="chip-label">'+product.price_m2+'</div></div><p><a href="#calculator?product_id='+product.id+'" class="button button-fill button-raised text-left"><i class="material-icons">&#xE854;</i> Wykonaj kalkulację</a></p>';
+							html += '<div class="chip"><div class="chip-label">'+product.price_m2+'</div></div><p><a href="#calculator?product_id='+product.id+'&machine_id='+product.machine_id+'&category_id='+product.category_id+'&subcategory_id='+product.subcategory_id+'" class="button button-fill button-raised text-left"><i class="material-icons">&#xE854;</i> Wykonaj kalkulację</a></p>';
 						} else {
 							html += '<div class="chip"><div class="chip-label">Produkt dostępny na zamówienie.</div></div>';
 						}
@@ -556,14 +584,470 @@ var app = {
 			myApp.hidePreloader();
 			var xhr = e.detail.xhr;
 			var response = JSON.parse(xhr.response);
-			myApp.alert(response.message);
+			myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />'+response.message+'</div>','');
 			if(response.type == 'success'){
 				$$('#contact-form')[0].reset();
 			}
 		});
 		$$('#contact-form').on('form:error', function(e){
 			myApp.hidePreloader();
-			myApp.alert('Przepraszamy ale wystąpił błąd podczas wysyłania formularza.');
+			myApp.alert('Przepraszamy ale wystąpił błąd podczas wysyłania formularza.','');
 		});
+	},
+	init_calculator: function(response){
+		$$.each(response.calculator_machines,function(id,title){
+			$$('#machine_id').append('<option value="'+id+'" '+(id=='1' ? 'selected="selected"' : '')+'>'+title+'</option>');
+		});
+		$$('#machine_id').addClass('has-success');
+		$$('#category_id').append('<option value="0" selected="selected">wybierz</option>');
+		$$.each(response.calculator_categories,function(id,title){
+			$$('#category_id').append('<option value="'+id+'">'+title+'</option>');
+		});
+		$$('#width').val('');
+		$$('#height').val('');
+		$$('#quantity').val('');
+		
+		app.calculator_events();
+	},
+	calculator_events: function(){
+		$$('#machine_id').on('change',function(e){
+			app.calculator_reset();
+			if(parseInt($$(this).val()) > 0){
+				myApp.showPreloader();
+				$$.ajax({
+					url: baseurl+'api/api_calculator',
+					crossDomain: true,
+					dataType: 'json',
+					data: {
+						key: 'e547a2036c6faffc2859e132e7eee66f',
+						action: 'machine_change',
+						machine_id: $$(this).val()
+					},
+					success: function(response, status, xhr){
+						switch(response.type){
+							case 'success':
+								if(response.categories != 'undefined'){
+									var categories = [];
+									categories.push('<option value="">wybierz</option>');
+									$$.each(response.categories, function(key,value){
+										categories.push('<option value="' + key + '">'+value+'</option>');
+									});
+									$$('#category_id').html(categories.join(''));
+									$$('#machine_id').addClass('has-success').removeClass('has-error');
+									$$('#category_id, #subcategory_id, #product_id').removeClass('has-success has-error');
+								} else {
+									app.calculator_reset();
+								}
+							break;
+							case 'error':
+								myApp.alert(response.message, '');
+								app.calculator_reset();
+							break;
+						}
+					},
+					error: function(xhr, status){
+						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale wystąpił błąd komunikacji ze stroną<br /><a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '');
+					},
+					complete: function(){
+						myApp.hidePreloader();
+						app.calculator_validate();
+					}
+				});
+			} else {
+				app.calculator_validate();
+			}
+		});
+		$$('#category_id').on('change',function(e){
+			$$('#subcategory_id').empty();
+			$$('#product_id').empty();
+			$$('#product_info').empty();
+			$$('#laminates').empty();
+			$$('#services').empty();
+			if(parseInt($$(this).val()) > 0){
+				myApp.showPreloader();
+				$$.ajax({
+					url: baseurl+'api/api_calculator',
+					crossDomain: true,
+					dataType: 'json',
+					data: {
+						key: 'e547a2036c6faffc2859e132e7eee66f',
+						action: 'category_change',
+						category_id: $$(this).val()
+					},
+					success: function(response, status, xhr){
+						switch(response.type){
+							case 'success':
+								if(response.subcategories != 'undefined'){
+									var subcategories = [];
+									subcategories.push('<option value="">wybierz</option>');
+									$$.each(response.subcategories, function(key,value){
+										subcategories.push('<option value="' + key + '">'+value+'</option>');
+									});
+									$$('#subcategory_id').html(subcategories.join(''));
+									$$('#category_id').addClass('has-success').removeClass('has-error');
+									$$('#subcategory_id, #product_id').removeClass('has-success has-error');
+								} else {
+									app.calculator_reset();
+								}
+							break;
+							case 'error':
+								myApp.alert(response.message, '');
+								app.calculator_reset();
+							break;
+						}
+					},
+					error: function(xhr, status){
+						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale wystąpił błąd komunikacji ze stroną<br /><a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '');
+					},
+					complete: function(){
+						myApp.hidePreloader();
+						app.calculator_validate();
+					}
+				});
+			} else {
+				$$('#category_id').removeClass('has-success').addClass('has-error');
+				$$('#subcategory_id, #product_id').removeClass('has-success has-error');
+				$$('#product_id').prop('selectedIndex',0).empty();
+				app.calculator_validate();
+			}
+		});
+		$$('#subcategory_id').on('change',function(e){
+			$$('#product_id').empty();
+			$$('#product_info').empty();
+			$$('#laminates').empty();
+			$$('#services').empty();
+			if(parseInt($$(this).val()) > 0){
+				myApp.showPreloader();
+				$$.ajax({
+					url: baseurl+'api/api_calculator',
+					crossDomain: true,
+					dataType: 'json',
+					data: {
+						key: 'e547a2036c6faffc2859e132e7eee66f',
+						action: 'subcategory_change',
+						subcategory_id: $$(this).val()
+					},
+					success: function(response, status, xhr){
+						switch(response.type){
+							case 'success':
+								var products = [];
+								products.push('<option value="">wybierz</option>');
+								$$.each(response.products, function(key,value){
+									products.push('<option value="'+value.id+'">'+value.product_translation_title+'</option>');
+								});
+								$$('#product_id').html(products.join(''));
+								$$('#subcategory_id').addClass('has-success').removeClass('has-error');
+								$$('#product_id').removeClass('has-success has-error');
+							break;
+							case 'error':
+								myApp.alert(response.message, '');
+								app.calculator_reset();
+							break;
+						}
+					},
+					error: function(xhr, status){
+						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale wystąpił błąd komunikacji ze stroną<br /><a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '');
+					},
+					complete: function(){
+						myApp.hidePreloader();
+						app.calculator_validate();
+					}
+				});
+			} else {
+				$$('#subcategory_id').removeClass('has-success').addClass('has-error');
+				$$('#product_id').removeClass('has-success has-error');
+				$$('#product_id').prop('selectedIndex',0).empty();
+				app.calculator_validate();
+			}
+		});
+		$$('#product_id').on('change',function(e){
+			$$('#product_info').empty();
+			$$('#laminates').empty();
+			$$('#services').empty();
+			if(parseInt($$(this).val()) > 0){
+				myApp.showPreloader();
+				$$.ajax({
+					url: baseurl+'api/api_calculator',
+					crossDomain: true,
+					dataType: 'json',
+					data: {
+						key: 'e547a2036c6faffc2859e132e7eee66f',
+						action: 'product_change',
+						product_id: $$(this).val()
+					},
+					success: function(response, status, xhr){
+						switch(response.type){
+							case 'success':
+								$$('#product_info').html(response.view);
+								$$('#product_id').addClass('has-success').removeClass('has-error');
+								if($$('#product_info input[name="type_id"]').length){
+									$$('input[name="type_id"]').on('change',function(){
+										app.calculator_validate();
+									});
+								}
+								var laminates = [];
+								var services = [];
+								if(typeof response.services != 'undefined' && response.services.length){
+									$$.each(response.services, function(key,service){
+										if(service.radio && service.radio == 'laminowanie'){
+											laminates.push(service);
+										} else {
+											services.push(service);
+										}
+									});
+									if(laminates.length){
+										$$('#laminates').append('<li class="item-divider">Wybierz laminat</li>');
+										$$('#laminates').append('<li><label class="label-radio item-content"><input type="radio" name="laminate" value="0" checked="checked" /><div class="item-media"><i class="icon icon-form-radio"></i></div><div class="item-inner"><div class="item-title">Bez laminatu</div></div></label></li>');
+										$$.each(laminates, function(key,laminate){
+											$$('#laminates').append('<li><label class="label-radio item-content"><input type="radio" name="laminate" value="'+laminate.id+'" /><div class="item-media"><i class="icon icon-form-radio"></i></div><div class="item-inner"><div class="item-title">'+laminate.service_translation_title+'</div></div></label></li>');
+										});
+										$$('#laminates input').on('click',function(){
+											app.calculator_validate();
+										});
+									}
+									if(services.length){
+										$$('#services').append('<li class="item-divider">Dodatkowe usługi</li>');
+										var checkboxes = [];
+										var radios = [];
+										$$.each(services, function(key,service){
+											if(service.radio){
+												radios.push(service);
+											} else {
+												checkboxes.push(service);
+											}
+										});
+										if(checkboxes.length){
+											$$.each(checkboxes, function(key,service){
+												$$('#services').append('<li class="behavior-append"><label class="label-checkbox item-content"><input type="checkbox" name="service_checkbox[]" value="'+service.id+'" '+(service.behavior ? 'data-behavior="'+service.behavior+'"' : '')+' /><div class="item-media"><i class="icon icon-form-checkbox"></i></div><div class="item-inner"><div class="item-title">'+service.service_translation_title+'</div></div></label></li>');
+											});
+											$$('#services input[type="checkbox"]').on('change',function(){
+												var input = $$(this);
+												input.toggleClass('imChecked');
+												var behavior = input.data('behavior');
+												if(typeof behavior != 'undefined'){
+													app.calculator_handle_behavior(input, behavior);
+												}
+												app.calculator_validate();
+											});
+										}
+										if(radios.length){
+											$$.each(radios, function(key,service){
+												$$('#services').append('<li class="behavior-append"><label class="label-radio item-content"><input type="radio" name="service_radio['+service.radio.escapeDiacritics()+']" value="'+service.id+'" '+(service.behavior ? 'data-behavior="'+service.behavior+'"' : '')+' /><div class="item-media"><i class="icon icon-form-radio"></i></div><div class="item-inner"><div class="item-title">'+service.service_translation_title+'</div></div></label></li>');
+											});
+											$$('#services input[type="radio"]').on('click',function(){
+												var input = $$(this);
+												var restRadios = $$('#services input[type="radio"]').filter(function(i,el) {
+													return !$$(this).is(input);
+												});
+												$$.each(restRadios,function(i,r){
+													$$(r).removeClass('imChecked');
+													var behavior = $$(r).data('behavior');
+													if(typeof behavior != 'undefined'){
+														app.calculator_handle_behavior($$(r), behavior);
+													}
+												});
+												if(input.hasClass("imChecked")) {
+													input.removeClass("imChecked");
+													input.prop('checked', false);
+												} else { 
+													input.prop('checked', true);
+													input.addClass("imChecked");
+												};
+												var behavior = input.data('behavior');
+												if(typeof behavior != 'undefined'){
+													app.calculator_handle_behavior(input, behavior);
+												}
+												app.calculator_validate();
+											});
+										}
+									}
+								}
+								if($$('#express').length){
+									$$('#express').on('change',function(){
+										app.calculator_validate();
+									});
+								}
+							break;
+							case 'error':
+								myApp.alert(response.message, '');
+								app.calculator_reset();
+							break;
+						}
+					},
+					error: function(xhr, status){
+						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale wystąpił błąd komunikacji ze stroną<br /><a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '');
+					},
+					complete: function(){
+						myApp.hidePreloader();
+						app.calculator_validate();
+					}
+				});
+			} else {
+				$$('#product_id').removeClass('has-success').addClass('has-error');
+				app.calculator_validate();
+			}
+		});
+		$$('#width').on('change',function(e){
+			var width = parseInt($$(this).val());
+			if(width > 0){
+				$$('#width').removeClass('has-error').addClass('has-success');
+			} else {
+				$$('#width').removeClass('has-success').addClass('has-error');
+			}
+			app.calculator_validate();
+		});
+		$$('#height').on('change',function(e){
+			var height = parseInt($$(this).val());
+			if(height > 0){
+				$$('#height').removeClass('has-error').addClass('has-success');
+			} else {
+				$$('#height').removeClass('has-success').addClass('has-error');
+			}
+			app.calculator_validate();
+		});
+		$$('#quantity').on('change',function(e){
+			var quantity = parseInt($$(this).val());
+			if(quantity > 0){
+				$$('#quantity').removeClass('has-error').addClass('has-success');
+			} else {
+				$$('#quantity').removeClass('has-success').addClass('has-error');
+			}
+			app.calculator_validate();
+		});
+	},
+	calculator_validate: function(){
+		var fields = ['machine_id','category_id','subcategory_id','product_id','width','height','quantity'];
+		var valid = true;
+		$$.each(fields,function(key,field){
+			if(!$$('#'+field).hasClass('has-success'))
+				valid = false;
+		});
+		if($$('.behavior').length){
+			$$('.behavior').each(function(){
+				if($$(this).css('display') != 'none' && !$$(this).hasClass('has-success')){
+					valid = false;
+				}
+			});
+		}
+		if(valid){
+			app.calculator_calculate();
+		} else {
+			$$('#calculator-response').html('<small>Wypełnij poprawnie wszystkie pola aby dokonać kalkulacji. Pola oznaczone * są wymagane.</small>');
+		}
+	},
+	calculator_calculate: function(){
+		var services_checkboxes_array = [];
+		var services_radios_array = [];
+		var _behavior_array = [];
+		
+		$$('input[name="service_checkbox[]"]:checked').each(function(i,el){
+			services_checkboxes_array.push($$(this).val());
+		});
+		$$('input[name*="service_radio"]:checked').each(function(i,el){
+			services_radios_array.push($$(this).val());
+		});
+		$$('.behavior input').each(function(i,el){
+			if($$(this).closest('.behavior').css('display') != 'none' && $$(this).closest('.behavior').hasClass('has-success')){
+				_behavior_array.push({
+					service_id: $$(this).attr('name').match(/[^[\]]+(?=])/g)[0],
+					value: $$(this).val()
+				});
+			}
+		});
+		var behavior_array = _behavior_array.reduce(function(total,current){
+			total[current.service_id] = current.value;
+			return total;
+		},{});
+		
+		myApp.showPreloader();
+		$$.ajax({
+			url: baseurl+'api/api_calculator',
+			crossDomain: true,
+			dataType: 'json',
+			data: {
+				key: 'e547a2036c6faffc2859e132e7eee66f',
+				action: 'calculate',
+				machine_id: $$('#machine_id').val(),
+				product_id: $$('#product_id').val(),
+				width: $$('#width').val(),
+				height: $$('#height').val(),
+				quantity: $$('#quantity').val(),
+				laminate: ($$('input[name="laminate"]:checked').length ? $$('input[name="laminate"]:checked').val() : null),
+				services_checkboxes: services_checkboxes_array,
+				services_radios: services_radios_array,
+				type_id: $$('input[name="type_id"]').length ? $$('input[name="type_id"]:checked').val() : null,
+				express: ($$('#express').length && $$('#express').prop('checked') ? 1 : null),
+				behavior: behavior_array
+			},
+			success: function(response, status, xhr){
+				switch(response.type){
+					case 'success':
+						console.log(response);
+						$$('#calculator-response').html(response.view);
+					break;
+					case 'error':
+						myApp.alert(response.message, '');
+					break;
+				}
+			},
+			error: function(xhr, status){
+				myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale wystąpił błąd komunikacji ze stroną<br /><a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '');
+			},
+			complete: function(){
+				myApp.hidePreloader();
+			}
+		});
+	},
+	calculator_reset: function(){
+		$$('#category_id').prop('selectedIndex',0).empty().append('<option value="">wybierz</option>');
+		$$('#subcategory_id').empty();
+		$$('#product_id').empty();
+		
+		$$('#machine_id').removeClass('has-success');
+		$$('#category_id').removeClass('has-success');
+		$$('#subcategory_id').removeClass('has-success');
+		$$('#product_id').removeClass('has-success');
+		
+		$$('#product_info').empty();
+		$$('#laminates').empty();
+		$$('#services').empty();
+	},
+	calculator_handle_behavior: function(input,behavior){
+		switch(behavior){
+			case 'linia_ciecia':{
+				var behavior_outer = $$('.behavior[data-id="'+input.val()+'"]');
+				if(behavior_outer.length <= 0){
+					var behavior_outer = '<li class="behavior" data-id="'+input.val()+'"><div class="item-content"><div class="item-inner"><div class="item-title label">* Długość linii cięcia</div><div class="item-input"><input type="number" name="behavior['+input.val()+']" min="1" required /></div></div></div></li>';
+					input.closest('.behavior-append').append(behavior_outer);
+					input.closest('.behavior-append').find('.behavior input').on('change',function(){
+						if(parseInt($$(this).val()) > 0){
+							$$('.behavior[data-id="'+input.val()+'"]').removeClass('has-error').addClass('has-success');
+						} else {
+							$$('.behavior[data-id="'+input.val()+'"]').removeClass('has-success').addClass('has-error');
+						}
+						app.calculator_validate();
+					});
+				}
+				if(input.hasClass('imChecked')){
+					$$('.behavior[data-id="'+input.val()+'"]').show();
+				} else {
+					$$('.behavior[data-id="'+input.val()+'"]').hide();
+				}
+				break;
+			}
+			case 'cena_za_obwod': {
+				var behavior_outer = $$('.behavior[data-id="'+input.val()+'"]');
+				if(behavior_outer.length <= 0){
+					var behavior_outer = '<div class="behavior has-success" data-id="'+input.val()+'"><input type="hidden" name="behavior['+input.val()+']" value="1" /></div>';
+					input.closest('.behavior-append').append(behavior_outer);
+				}
+				if(input.hasClass('imChecked')){
+					$$('.behavior[data-id="'+input.val()+'"]').show();
+				} else {
+					$$('.behavior[data-id="'+input.val()+'"]').hide();
+				}
+				break;
+			}
+		}
 	},
 };
