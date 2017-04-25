@@ -118,6 +118,9 @@
 							</div>
 						</div>
 					</div>
+					<a href="#" class="floating-button out" id="calculator-fab">
+						<i class="material-icons">&#xE5DB;</i>
+					</a>
 					<div class="page-content hide-bars-on-scroll">
 						<div class="content-block">
 							<p>Oblicz koszt wydruku korzystając z poniższego kalkulatora.</p>
@@ -125,6 +128,36 @@
 						</div>
 						<form class="list-block ajax-submit" method="POST" id="calculator-form">
 							<ul>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Szerokość w mm</div>
+											<div class="item-input">
+												<input type="number" name="width" id="width" min="1" required />
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Wysokość w mm</div>
+											<div class="item-input">
+												<input type="number" name="height" id="height" min="1" required />
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Nakład</div>
+											<div class="item-input">
+												<input type="number" name="quantity" id="quantity" min="1" required />
+											</div>
+										</div>
+									</div>
+								</li>
 								<li>
 									<div class="item-content">
 										<div class="item-inner">
@@ -167,36 +200,6 @@
 								</li>
 								<div id="product_info"></div>
 								<div id="laminates"></div>
-								<li>
-									<div class="item-content">
-										<div class="item-inner">
-											<div class="item-title label">* Szerokość w mm</div>
-											<div class="item-input">
-												<input type="number" name="width" id="width" min="1" required />
-											</div>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="item-content">
-										<div class="item-inner">
-											<div class="item-title label">* Wysokość w mm</div>
-											<div class="item-input">
-												<input type="number" name="height" id="height" min="1" required />
-											</div>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="item-content">
-										<div class="item-inner">
-											<div class="item-title label">* Nakład</div>
-											<div class="item-input">
-												<input type="number" name="quantity" id="quantity" min="1" required />
-											</div>
-										</div>
-									</div>
-								</li>
 								<div id="services"></div>
 								<!--<li>
 									<div class="item-content">

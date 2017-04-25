@@ -26,6 +26,7 @@ function videourlToHTML(videourl){
 var	$$ = Dom7, myApp, mainView,
 	initilize_complete = false, index_articles_loaded = false, categories = [],
 	articles_limit = 10, articles_offset = articles_limit,
+	calculator_query = {},
 	baseurl = 'https://www.beta.dpsdruk.pl/';
 var app = {
 	initialize: function(){
@@ -593,6 +594,16 @@ var app = {
 			myApp.hidePreloader();
 			myApp.alert('Przepraszamy ale wystąpił błąd podczas wysyłania formularza.','');
 		});
+		myApp.onPageInit('calculator', function(page){
+			app.calculator_fill(page.query);
+		});
+		myApp.onPageReinit('calculator', function(page){
+			app.calculator_fill(page.query);
+		});
+		$$('#calculator-fab').on('click',function(){
+			var offset = $$('#calculator-response').offset().top + $$('.page[data-page="calculator"] .page-content').scrollTop();
+			$$('.page[data-page="calculator"] .page-content').scrollTop(offset,300);
+		});
 	},
 	init_calculator: function(response){
 		$$.each(response.calculator_machines,function(id,title){
@@ -608,6 +619,12 @@ var app = {
 		$$('#quantity').val('');
 		
 		app.calculator_events();
+	},
+	calculator_fill: function(query){
+		calculator_query = query;
+		if(typeof query.machine_id != 'undefined'){
+			$$('#machine_id').val(query.machine_id).trigger('change');
+		}
 	},
 	calculator_events: function(){
 		$$('#machine_id').on('change',function(e){
@@ -635,6 +652,10 @@ var app = {
 									$$('#category_id').html(categories.join(''));
 									$$('#machine_id').addClass('has-success').removeClass('has-error');
 									$$('#category_id, #subcategory_id, #product_id').removeClass('has-success has-error');
+									
+									if(typeof calculator_query.category_id != 'undefined'){
+										$$('#category_id').val(calculator_query.category_id).trigger('change');
+									}
 								} else {
 									app.calculator_reset();
 								}
@@ -686,6 +707,10 @@ var app = {
 									$$('#subcategory_id').html(subcategories.join(''));
 									$$('#category_id').addClass('has-success').removeClass('has-error');
 									$$('#subcategory_id, #product_id').removeClass('has-success has-error');
+									
+									if(typeof calculator_query.subcategory_id != 'undefined'){
+										$$('#subcategory_id').val(calculator_query.subcategory_id).trigger('change');
+									}
 								} else {
 									app.calculator_reset();
 								}
@@ -738,6 +763,10 @@ var app = {
 								$$('#product_id').html(products.join(''));
 								$$('#subcategory_id').addClass('has-success').removeClass('has-error');
 								$$('#product_id').removeClass('has-success has-error');
+								
+								if(typeof calculator_query.product_id != 'undefined'){
+									$$('#product_id').val(calculator_query.product_id).trigger('change');
+								}
 							break;
 							case 'error':
 								myApp.alert(response.message, '');
@@ -933,6 +962,7 @@ var app = {
 			app.calculator_calculate();
 		} else {
 			$$('#calculator-response').html('<small>Wypełnij poprawnie wszystkie pola aby dokonać kalkulacji. Pola oznaczone * są wymagane.</small>');
+			$$('#calculator-fab').removeClass('in').addClass('out');
 		}
 	},
 	calculator_calculate: function(){
@@ -971,6 +1001,8 @@ var app = {
 				product_id: $$('#product_id').val(),
 				width: $$('#width').val(),
 				height: $$('#height').val(),
+				width_measure: 'mm',
+				height_measure: 'mm',
 				quantity: $$('#quantity').val(),
 				laminate: ($$('input[name="laminate"]:checked').length ? $$('input[name="laminate"]:checked').val() : null),
 				services_checkboxes: services_checkboxes_array,
@@ -982,8 +1014,32 @@ var app = {
 			success: function(response, status, xhr){
 				switch(response.type){
 					case 'success':
-						console.log(response);
 						$$('#calculator-response').html(response.view);
+						$$('[data-toggle="alert"]').on('click',function(e){
+							e.preventDefault();
+							var target = this;
+							var buttons = [
+								{
+									text: $$(this).data('text'),
+									label: true
+								},
+								{
+									text: '<i class="material-icons">&#xE5CD;</i> Zamknij',
+									color: 'red'
+								},
+							];
+							myApp.actions(target, buttons);
+						});
+						$$('#calculator-fab').removeClass('out').addClass('in');
+						var offset = $$('#calculator-response').offset().top + $$('.page[data-page="calculator"] .page-content').scrollTop();
+						$$('.page[data-page="calculator"] .page-content').off('scroll').on('scroll',function(){
+							var topWindow = $$(this).scrollTop() + $$(window).height();
+							if(topWindow >= offset){
+								$$('#calculator-fab').removeClass('in').addClass('out');
+							} else {
+								$$('#calculator-fab').removeClass('out').addClass('in');
+							}
+						});
 					break;
 					case 'error':
 						myApp.alert(response.message, '');
