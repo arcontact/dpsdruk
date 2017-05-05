@@ -18,12 +18,29 @@
 <body class="layout-white theme-red">
 	<div class="panel-overlay"></div>
 	<div class="panel panel-left panel-reveal">
-		<div class="content-block">
-			<p><img src="img/logo.png" alt="DPSDRUK.PL" /></p>
+		<!--<div class="content-block">
+			<p class="text-center">
+				<a href="https://www.dpsdruk.pl" class="external">
+					<img src="img/logo.png" alt="DPSDRUK.PL" />
+					<strong>www.dpsdruk.pl</strong>
+				</a>
+			</p>
 			<label class="label-switch">
 				<input type="checkbox" id="conn" checked />
 				<div class="checkbox"></div>
-			</label>
+			</label> Wi-Fi
+		</div>-->
+		<div class="messages-content">
+			<div class="messages">
+				<div class="message message-with-avatar message-received">
+					<div class="message-name">DPSDRUK.PL</div>
+					<div class="message-text">Witaj,<br />w czym możemy pomóc?</div>
+					<div style="background-image:url('img/avatar.png')" class="message-avatar"></div>
+				</div>
+			</div>
+		</div>
+		<div class="content-block">
+			<a href="#chat" class="button button-raised button-fill close-panel">PRZEJDŹ DO CZATU</a>
 		</div>
 	</div>
 	<div class="panel panel-right panel-reveal">
@@ -33,7 +50,7 @@
 			<p><a href="#calculator" class="close-panel">Kalkulator</a></p>
 			<p><a href="#contact" class="close-panel">Kontakt</a></p>
 		</div>
-		<div  id="categories-list"></div>
+		<div id="categories-list"></div>
 	</div>
 	<div class="views">
 		<div class="view view-main">
@@ -42,7 +59,10 @@
 					<div class="navbar logo-center">
 						<div class="navbar-inner">
 							<div class="left">
-								<a href="#" data-panel="left" class="link open-panel">
+								<!--<a href="#" data-panel="left" class="link open-panel">
+									<i class="material-icons">&#xe0b7;</i>
+								</a>-->
+								<a href="#chat" class="link">
 									<i class="material-icons">&#xe0b7;</i>
 								</a>
 							</div>
@@ -83,14 +103,18 @@
 					</div>
 				</div>
 				<div class="page cached navbar-fixed" data-page="about">
-					<div class="navbar">
+					<div class="navbar logo-center">
 						<div class="navbar-inner">
 							<div class="left">
 								<a href="#index" class="link icon-only back">
 									<i class="icon icon-back"></i>
 								</a>
 							</div>
-							<div class="center"></div>
+							<div class="center">
+								<a href="#index" class="link">
+									<img src="img/logo-white.png" alt="DPSDRUK.PL" />
+								</a>
+							</div>
 							<div class="right">
 								<a href="#" data-panel="right" class="link open-panel">
 									<i class="icon icon-bars"></i>
@@ -347,6 +371,40 @@
 						<div class="articles-list">
 							<div class="list-block media-list">
 								<ul></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="page cached navbar-fixed toolbar-fixed" data-page="chat">
+					<div class="navbar">
+						<div class="navbar-inner">
+							<div class="left">
+								<a href="#index" class="link icon-only back">
+									<i class="icon icon-back"></i>
+								</a>
+							</div>
+							<div class="center">
+								CZAT
+							</div>
+							<div class="right">
+								<a href="#" data-panel="right" class="link open-panel">
+									<i class="icon icon-bars"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="toolbar messagebar messagebar-init" data-max-height="200">
+						<div class="toolbar-inner">
+							<textarea placeholder="Wiadomość"></textarea><a href="#" class="link">Wyślij</a>
+						</div>
+					</div>
+					<div class="page-content messages-content hide-navbar-on-scroll">
+						<div class="chat-info"><i class="material-icons">&#xE192;</i>Jesteśmy dostępni od poniedziałku do piątku w godzinach 8:00 - 16:00.</div>
+						<div class="messages">
+							<div class="message message-with-avatar message-received">
+								<div class="message-name">DPSDRUK.PL</div>
+								<div class="message-text init-message-text">Witaj,<br />w czym możemy pomóc?</div>
+								<div style="background-image:url('img/avatar.png')" class="message-avatar"></div>
 							</div>
 						</div>
 					</div>

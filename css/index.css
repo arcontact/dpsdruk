@@ -8,6 +8,8 @@
 .material-icons{vertical-align:middle;}
 .text-muted{color:#999;}
 .clearfix::after{display:block;content:"";clear:both;}
+.clearwrap{overflow:visible;text-overflow:clip;white-space:normal;}
+.panel-left{background-color:#eee;}
 #categories-list .list-block{font-size:13px;}
 #categories-list .list-block .list-group-title{height:auto; line-height:14px; font-size:14px; overflow:hidden; padding:10px 16px;}
 #categories-list .item-content, #categories-list .item-inner{min-height:initial;}
@@ -61,3 +63,12 @@ table.contact-table i{font-size:30px; margin:2px 10px 0 0; color:#b6b6b6;}
 .button-inline{display:inline-block;}
 #calculator-fab.out{opacity:0;}
 #calculator-fab.in{opacity:1;}
+.chat-info{padding:10px 16px 10px 56px; font-size:12px; background-color:#fff; position:relative;}
+.chat-info i{position:absolute; left:16px; top:50%; margin-top:-12px; color:#ddd;}
+.messages{padding-bottom:48px;}
+.toolbar.messagebar a.link{color:#fff;}
+.toolbar.messagebar textarea{color:#fff;}
+#nickname{background-color:#fff; padding:10px 16px;}
+#nickname .list-block{margin:0px;}
+#nickname .list-block ul::before{display:none;}
+#nickname .list-block .item-content{padding-left:0px;}

@@ -27,6 +27,7 @@ var	$$ = Dom7, myApp, mainView,
 	initilize_complete = false, index_articles_loaded = false, categories = [],
 	articles_limit = 10, articles_offset = articles_limit,
 	calculator_query = {},
+	myMessages, totalMessages = 0, chat_interval,
 	baseurl = 'https://www.beta.dpsdruk.pl/';
 var app = {
 	initialize: function(){
@@ -50,7 +51,8 @@ var app = {
 	gotConnection: function(){
 		//if(app.checkConnection() == 'fail')return false;
 		//return true;
-		return $$('#conn').prop('checked');
+		//return $$('#conn').prop('checked');
+		return true;
 	},
 	init: function(){
 		myApp = new Framework7({
@@ -79,11 +81,15 @@ var app = {
 		});
 		if(app.gotConnection()){
 			myApp.showPreloader('Ładuję aplikację...');
+			var chatid = localStorage.chatid;
 			$$.ajax({
 				url: baseurl+'api/init/'+articles_limit,
 				crossDomain: true,
 				dataType: 'json',
-				data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
+				data: {
+					key: 'e547a2036c6faffc2859e132e7eee66f',
+					chatid: chatid
+				},
 				success: function(response, status, xhr){
 					$$('#splash_articles').html('<div class="content-block-title">Aktualności</div><div class="list-block media-list"><ul></ul></div>');
 					$$.each(response.articles, function(i, article){
@@ -113,7 +119,6 @@ var app = {
 						}
 					});
 					
-					$$('.page[data-page="about"] .navbar .center').text(response.about.title);
 					$$('.page[data-page="about"] .page-content').append('<div class="content-block">'+response.about.content+'</div>');
 					if(typeof response.about.sections != 'undefined'){
 						$$.each(response.about.sections,function(i,section){
@@ -192,6 +197,9 @@ var app = {
 					
 					//kalkulator
 					app.init_calculator(response);
+					
+					//chat
+					app.chat_preinit(response);
 					
 					initilize_complete = true;
 					categories = response.categories;
@@ -274,6 +282,13 @@ var app = {
 				if(mainView.activePage.name == 'contact'){
 					$$('#contact-form').attr('action', baseurl+'api/contact_form?key=e547a2036c6faffc2859e132e7eee66f');
 				}
+			}
+		});
+		$$(document).on('page:afteranimation', function(e){
+			if(mainView.activePage.name == 'chat'){
+				app.chat_init();
+			} else {
+				clearInterval(chat_interval);
 			}
 		});
 		myApp.onPageAfterAnimation('offline', function(page){
@@ -1106,4 +1121,132 @@ var app = {
 			}
 		}
 	},
+	
+	chat_preinit: function(response){
+		var messages = [];
+		if(typeof response.messages != 'undefined' && response.messages.length > 0){
+			$$.each(response.messages, function(i,message){
+				var msg = {
+					text: message.content,
+					date: moment(message.date_create).format('LLL'),
+					name: message.nickname,
+					type: (message.admin ? 'received' : 'sent'),
+					avatar: (message.admin ? 'img/avatar.png' : false),
+				};
+				messages.push(msg);
+			});
+		}
+		myMessages = myApp.messages('.page[data-page="chat"] .messages', {
+			autoLayout: true,
+			messages: messages
+		});
+	},
+	chat_init: function(){
+		var nickname = localStorage.nickname;
+		if(typeof nickname == 'undefined'){
+			myApp.prompt('Podaj imię i nazwisko', 
+				function(value){
+					localStorage.nickname = value;
+					localStorage.chatid = randId();
+					app.chat_listeners();
+				},
+				function(){
+					mainView.router.loadPage('#index');
+				}
+			);
+		} else {
+			app.chat_listeners();
+		}
+	},
+	chat_listeners: function(){
+		$$('.init-message-text').html('Witaj '+localStorage.nickname+',<br />w czym możemy pomóc?');
+		myMessages.scrollMessages();
+		var myMessagebar = myApp.messagebar('.messagebar');
+		$$('.messagebar .link').on('click', function () {
+			var messageText = myMessagebar.value().replace(/(?:\r\n|\r|\n)/g, '<br />').trim();
+			if(messageText.length === 0) return;
+			myMessagebar.clear();
+			
+			$$.ajax({
+				url: baseurl+'api/add_message',
+				crossDomain: true,
+				dataType: 'json',
+				data: {
+					key: 'e547a2036c6faffc2859e132e7eee66f',
+					chatid: localStorage.chatid,
+					content: messageText,
+					nickname: localStorage.nickname
+				},
+				success: function(response){
+					switch(response.type){
+						case "success":
+							myMessages.addMessage({
+								text: messageText,
+								type: 'sent',
+								name: localStorage.nickname,
+								day: 'Dzisiaj',
+								time: (new Date()).getHours() + ':' + (new Date()).getMinutes()
+							});
+							clearInterval(chat_interval);
+							app.chat_init_interval();
+						break;
+						case "error":
+							myApp.alert(response.message);
+						break;
+					}
+				},
+				error: function(){
+					myApp.alert('Przepraszamy ale wystąpił błąd podczas wysyłania wiadomości.');
+				},
+			});
+		});
+		
+		//sprawdzanie czy nie odpisano...
+		totalMessages = $$('.page[data-page="chat"] .messages > .message').length - 1;
+		if(totalMessages > 0){
+			app.chat_init_interval();
+		}
+	},
+	chat_init_interval: function(){
+		chat_interval = setInterval(function(){
+			app.chat_check_new_messages();
+		}, 30000);
+	},
+	chat_check_new_messages: function(){
+		totalMessages = $$('.page[data-page="chat"] .messages > .message').length - 1;
+		$$.ajax({
+			url: baseurl+'api/check_messages',
+			crossDomain: true,
+			dataType: 'json',
+			data: {
+				key: 'e547a2036c6faffc2859e132e7eee66f',
+				chatid: localStorage.chatid,
+				totalMessages: totalMessages
+			},
+			success: function(response){
+				switch(response.type){
+					case "success":
+						var messages = [];
+						$$.each(response.messages,function(i,message){
+							if(i >= totalMessages){
+								var msg = {
+									text: message.content,
+									date: moment(message.date_create).format('LLL'),
+									name: message.nickname,
+									type: (message.admin ? 'received' : 'sent'),
+									avatar: (message.admin ? 'img/avatar.png' : false),
+								};
+								messages.push(msg);
+							}
+						});
+						myMessages.addMessages(messages);
+					break;
+				}
+			},
+			complete: function(){
+				clearInterval(chat_interval);
+				app.chat_init_interval();
+			}
+		});
+	}
 };
