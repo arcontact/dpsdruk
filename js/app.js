@@ -16,7 +16,6 @@ function videourlToHTML(videourl){
 	var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
 	var match = videourl.match(regExp);
 	if(match && match[2].length == 11) {
-		//return '<div class="video-container"><iframe width="560" height="315" src="https://www.youtube.com/embed/'+match[2]+'?rel=0" frameborder="0" allowfullscreen></iframe></div>';
 		return '<div class="embed-responsive embed-responsive-16by9"><div class="embed-responsive-item youtube-mobile" data-embed="'+match[2]+'"><div class="play-button"></div></div></div>';
 	} else {
 		return '<a href="'+videourl+'" class="external button button-fill button-raised color-blue">'+videourl+'</a>';
@@ -28,14 +27,17 @@ var	$$ = Dom7, myApp, mainView,
 	articles_limit = 10, articles_offset = articles_limit,
 	calculator_query = {},
 	myMessages, totalMessages = 0, chat_interval,
-	baseurl = 'https://www.beta.dpsdruk.pl/';
+	baseurl = 'https://www.beta.dpsdruk.pl/',
+	ENVIRONMENT = 'production'; //production
 var app = {
 	initialize: function(){
 		this.bindEvents();
 	},
 	bindEvents: function(){
-		//document.addEventListener('deviceready', this.onDeviceReady, false);
-		app.init();
+		switch(ENVIRONMENT){
+			case 'development': app.init(); break;
+			case 'production': document.addEventListener('deviceready', this.onDeviceReady, false); break;
+		}
 	},
 	onDeviceReady: function(){
 		app.init();
@@ -49,9 +51,9 @@ var app = {
 		return states[networkState];
 	},
 	gotConnection: function(){
-		//if(app.checkConnection() == 'fail')return false;
-		//return true;
-		//return $$('#conn').prop('checked');
+		if(ENVIRONMENT == 'development')
+			return true;
+		if(app.checkConnection() == 'fail')return false;
 		return true;
 	},
 	init: function(){
@@ -91,7 +93,7 @@ var app = {
 					chatid: chatid
 				},
 				success: function(response, status, xhr){
-					$$('#splash_articles').html('<div class="content-block-title">Aktualności</div><div class="list-block media-list"><ul></ul></div>');
+					$$('#splash_articles').html('<div class="list-block media-list"><ul></ul></div>');
 					$$.each(response.articles, function(i, article){
 						var article_date = moment(article.date).format('LL');
 						var article_image;
@@ -169,19 +171,7 @@ var app = {
 									var videourlHTML = videourlToHTML(videourl);
 									$$('.page[data-page="about"] .page-content').append('<div class="content-block">'+videourlHTML+'</div>');
 								});
-								if($$('.youtube-mobile[data-embed]').length){
-									$$(".youtube-mobile[data-embed]").each(function(){
-										var t = $$(this), id = t.data('embed');
-										var image = new Image();
-										image.src = "https://img.youtube.com/vi/"+ id +"/sddefault.jpg";
-										image.addEventListener("load",function(){
-											t.append(image);
-										});
-										t.on('click',function(){
-											t.html('<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="https://www.youtube.com/embed/'+id+'?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe></div>');
-										});
-									});
-								}
+								app.youtube_listeners();
 							}
 							if(typeof section.files != 'undefined'){
 								var html = '<div class="list-block media-list"><ul>';
@@ -415,6 +405,7 @@ var app = {
 								var videourlHTML = videourlToHTML(videourl);
 								$$('#single_article_contents .content-block').append(videourlHTML);
 							});
+							app.youtube_listeners();
 						}
 						if(typeof article.files != 'undefined'){
 							var html = '<div class="list-block media-list"><ul>';
@@ -570,6 +561,7 @@ var app = {
 								var videourlHTML = videourlToHTML(videourl);
 								$$('.single_product_contents .content-block').append(videourlHTML);
 							});
+							app.youtube_listeners();
 						}
 						if(typeof product.files != 'undefined'){
 							var html = '<div class="list-block media-list"><ul>';
@@ -1248,5 +1240,21 @@ var app = {
 				app.chat_init_interval();
 			}
 		});
+	},
+	
+	youtube_listeners: function(){
+		if($$('.youtube-mobile[data-embed]').length){
+			$$(".youtube-mobile[data-embed]").each(function(){
+				var t = $$(this), id = t.data('embed');
+				var image = new Image();
+				image.src = "https://img.youtube.com/vi/"+ id +"/sddefault.jpg";
+				image.addEventListener("load",function(){
+					t.append(image);
+				});
+				t.on('click',function(){
+					t.html('<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="https://www.youtube.com/embed/'+id+'?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe></div>');
+				});
+			});
+		}
 	}
 };

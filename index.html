@@ -17,39 +17,13 @@
 </head>
 <body class="layout-white theme-red">
 	<div class="panel-overlay"></div>
-	<div class="panel panel-left panel-reveal">
-		<!--<div class="content-block">
-			<p class="text-center">
-				<a href="https://www.dpsdruk.pl" class="external">
-					<img src="img/logo.png" alt="DPSDRUK.PL" />
-					<strong>www.dpsdruk.pl</strong>
-				</a>
-			</p>
-			<label class="label-switch">
-				<input type="checkbox" id="conn" checked />
-				<div class="checkbox"></div>
-			</label> Wi-Fi
-		</div>-->
-		<div class="messages-content">
-			<div class="messages">
-				<div class="message message-with-avatar message-received">
-					<div class="message-name">DPSDRUK.PL</div>
-					<div class="message-text">Witaj,<br />w czym możemy pomóc?</div>
-					<div style="background-image:url('img/avatar.png')" class="message-avatar"></div>
-				</div>
-			</div>
-		</div>
-		<div class="content-block">
-			<a href="#chat" class="button button-raised button-fill close-panel">PRZEJDŹ DO CZATU</a>
-		</div>
-	</div>
 	<div class="panel panel-right panel-reveal">
-		<div class="content-block">
+		<!--<div class="content-block">
 			<p><a href="#index_articles" class="close-panel">Aktualności</a></p>
 			<p><a href="#about" class="close-panel">Jakość i technologia</a></p>
 			<p><a href="#calculator" class="close-panel">Kalkulator</a></p>
 			<p><a href="#contact" class="close-panel">Kontakt</a></p>
-		</div>
+		</div>-->
 		<div id="categories-list"></div>
 	</div>
 	<div class="views">
@@ -59,9 +33,6 @@
 					<div class="navbar logo-center">
 						<div class="navbar-inner">
 							<div class="left">
-								<!--<a href="#" data-panel="left" class="link open-panel">
-									<i class="material-icons">&#xe0b7;</i>
-								</a>-->
 								<a href="#chat" class="link">
 									<i class="material-icons">&#xe0b7;</i>
 								</a>
@@ -98,6 +69,16 @@
 					<div class="page-content hide-bars-on-scroll">
 						<div class="splash_page text-center">
 							<p><strong>Certyfikowana Drukarnia<br /><big>3M&trade; MCS&trade;</big><br />Warranty Qualified Manufacturer</strong></p>
+						</div>
+						<div id="index-grid">
+							<div class="row no-gutter">
+								<div class="col-auto"><a href="#calculator" class="close-panel"><span><i class="material-icons">&#xE5C3;</i><br />Kalkulator</span></a></div>
+								<div class="col-auto"><a href="#index_articles" class="close-panel"><span><i class="material-icons">&#xE0E5;</i><br />Aktualności</span></a></div>
+							</div>
+							<div class="row no-gutter">
+								<div class="col-auto"><a href="#about" class="close-panel"><span><i class="material-icons">&#xE88E;</i><br />O firmie</span></a></div>
+								<div class="col-auto"><a href="#contact" class="close-panel"><span><i class="material-icons">&#xE0CD;</i><br />Kontakt</span></a></div>
+							</div>
 						</div>
 						<div id="splash_articles"></div>
 					</div>
@@ -412,7 +393,7 @@
 			</div>
 		</div>
     </div>
-	<!--<script type="text/javascript" src="cordova.js"></script>-->
+	<script type="text/javascript" src="cordova.js"></script>
 	<script type="text/javascript" src="js/framework7.min.js"></script>
 	<script type="text/javascript" src="js/moment.min.js"></script>
 	<script type="text/javascript" src="js/moment.pl.js"></script>
