@@ -121,10 +121,10 @@ var app = {
 						}
 					});
 					
-					$$('.page[data-page="about"] .page-content').append('<div class="content-block">'+response.about.content+'</div>');
+					$$('.page[data-page="about"] .page-content').append('<div class="content-block"><article>'+response.about.content+'</article></div>');
 					if(typeof response.about.sections != 'undefined'){
 						$$.each(response.about.sections,function(i,section){
-							$$('.page[data-page="about"] .page-content').append('<div class="content-block-title">'+section.title+'</div><div class="content-block">'+section.content+'</div>');
+							$$('.page[data-page="about"] .page-content').append('<div class="content-block-title">'+section.title+'</div><div class="content-block"><article>'+section.content.replace(/<a(\s[^>]*)?>/ig, '').replace(/<\/a>/ig, '')+'</article></div>');
 							
 							if(typeof section.galleries != 'undefined'){
 								var sectionPhotoBrowsers = [];
@@ -184,6 +184,9 @@ var app = {
 						});
 					}
 					$$('.page[data-page="about"] .page-content .content-block a').addClass('external');
+					$$('.page[data-page="about"] article img').each(function(){
+						$$(this).attr('src', baseurl.substring(0, baseurl.length-1) + $$(this).attr('src').replace(baseurl,"/"));
+					});
 					
 					//kalkulator
 					app.init_calculator(response);
@@ -359,7 +362,10 @@ var app = {
 						var article_image = '';
 						if(typeof article.image != 'undefined')
 							article_image = '<img src="'+baseurl+'assets/articles/s3_'+article.image+'" class="img-responsive" />';
-						$$('#single_article_contents').html('<div class="content-block"><p class="text-muted"><small><i>'+article_date+'</i></small></p><h2>'+article.title+'</h2>'+article_image+article.content+'</div>');
+						$$('#single_article_contents').html('<div class="content-block"><p class="text-muted"><small><i>'+article_date+'</i></small></p><h2>'+article.title+'</h2>'+article_image+'<article>'+article.content+'</article></div>');
+						$$('#single_article_contents article img').each(function(){
+							$$(this).attr('src', baseurl.substring(0, baseurl.length-1) + $$(this).attr('src').replace(baseurl,"/"));
+						});
 						if(typeof article.galleries != 'undefined'){
 							var photoBrowsers = [];
 							$$.each(article.galleries, function(i,gallery){
@@ -442,7 +448,7 @@ var app = {
 							if(category.id == page.query.category_id){
 								$$.each(category.children,function(i, subcategory){
 									if(subcategory.id == page.query.subcategory_id){
-										$$('.single_category_contents').html('<div class="content-block"><h2>'+subcategory.title+'</h2>'+subcategory.content+'</div>');
+										$$('.single_category_contents').html('<div class="content-block"><h2>'+subcategory.title+'</h2><article>'+subcategory.content+'</article></div>');
 									}
 								});
 							}
@@ -454,6 +460,9 @@ var app = {
 						});
 						html += '</div>';
 						$$('.single_category_contents').append(html);
+						$$('.single_category_contents article img').each(function(){
+							$$(this).attr('src', baseurl.substring(0, baseurl.length-1) + $$(this).attr('src').replace(baseurl,"/"));
+						});
 					},
 					error: function(xhr, status){
 						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać produktów ze strony <a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '', function(){
@@ -487,14 +496,14 @@ var app = {
 							html += '<div class="chip"><div class="chip-label">Produkt dostępny na zamówienie.</div></div>';
 						}
 						html += '</div>';
-						html += product.content.replace(/<a(\s[^>]*)?>/ig, '').replace(/<\/a>/ig, '');
+						html += '<article>'+product.content.replace(/<a(\s[^>]*)?>/ig, '').replace(/<\/a>/ig, '')+'</article>';
 						html += '<div class="clearfix"></div>';
 						if(typeof product.producer_url != 'undefined')
 							html += '<p><small class="text-muted">STRONA PRODUCENTA:</small><a href="'+product.producer_url+'" class="button button-fill button-raised color-blue text-left external"><i class="material-icons">&#xe157;</i> '+product.producer_url+'</a></p>';
 						html += '</div>';
 						$$('.single_product_contents').html(html);
-						$$('.single_product_contents img').each(function(){
-							$$(this).attr('src', baseurl.substring(0, baseurl.length-1) + $$(this).attr('src').replace(baseurl,""));
+						$$('.single_product_contents article img').each(function(){
+							$$(this).attr('src', baseurl.substring(0, baseurl.length-1) + $$(this).attr('src').replace(baseurl,"/"));
 						});
 						if(typeof product.galleries != 'undefined'){
 							var photoBrowsers = [];
@@ -610,6 +619,10 @@ var app = {
 		$$('#calculator-fab').on('click',function(){
 			var offset = $$('#calculator-response').offset().top + $$('.page[data-page="calculator"] .page-content').scrollTop();
 			$$('.page[data-page="calculator"] .page-content').scrollTop(offset,300);
+		});
+		app.index_grid();
+		$$(window).on('resize',function(){
+			app.index_grid();
 		});
 	},
 	init_calculator: function(response){
@@ -1256,5 +1269,16 @@ var app = {
 				});
 			});
 		}
+	},
+	index_grid: function(){
+		var ww = $$(window).width();
+		var rw = ww/2;
+		if(ww > 500){
+			rw=140;
+		}
+		$$('#index-grid a').css({
+			'height': rw+'px',
+			'line-height': rw+'px',
+		});
 	}
 };
