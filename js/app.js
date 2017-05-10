@@ -904,10 +904,11 @@ var app = {
 													$$('#services .behavior-append[data-radio="'+$$(this).data('radio')+'"]').addClass('grouped-behavior');
 												}
 												$$('#services .behavior-append[data-radio="'+$$(this).data('radio')+'"]').eq(0).addClass('first');
+												$$('#services .behavior-append[data-radio="'+$$(this).data('radio')+'"]').eq($$('#services .behavior-append[data-radio="'+$$(this).data('radio')+'"]').length - 1).addClass('last');
 											});
 											$$('#services input[type="radio"]').on('change',function(){
 												var input = $$(this);
-												var restRadios = $$('#services input[type="radio"]').filter(function(i,el) {
+												var restRadios = $$('#services .behavior-append[data-radio="'+input.closest('.behavior-append').data('radio')+'"] input[type="radio"]').filter(function(i,el) {
 													return !$$(this).is(input);
 												});
 												$$.each(restRadios,function(i,r){
@@ -930,9 +931,20 @@ var app = {
 												}
 												app.calculator_validate();
 											});
-											$$('#services input[type="radio"]').on('click',function(){
-												var state = $$(this).hasClass('imChecked');
-												myApp.alert(state);
+											$$('#services .behavior-append[data-radio]').on('click',function(e){
+												e.stopPropagation();
+												e.preventDefault();
+												var input = $$(this).find('input[type="radio"]');
+												var state = input.prop('checked');
+												if(state){
+													input.prop('checked',false).removeClass('imChecked');
+													var behavior = input.data('behavior');
+													if(typeof behavior != 'undefined'){
+														app.calculator_handle_behavior(input, behavior);
+													}
+												} else {
+													input.trigger('change');
+												}
 											});
 										}
 									}

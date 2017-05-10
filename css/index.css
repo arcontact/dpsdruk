@@ -91,6 +91,9 @@ table.contact-table i{font-size:30px; margin:2px 10px 0 0; color:#b6b6b6;}
 .main-toolbar a.link.active{color:#fff;}
 .main-toolbar i{display:block;}
 .card-header-red{background-color:#e2001a; color:#fff;}
-.grouped-behavior:after{content:""; position:absolute; bottom:50%; margin-bottom:10px; left:25px; display:block; width:2px; height:50%; background-color:#ccc; z-index:-1;}
-.grouped-behavior.first:after{display:none;}
-.grouped-behavior.first:after{content:""; position:absolute; top:50%; margin-top:10px; left:25px; display:block; width:2px; height:50%; background-color:#ccc; z-index:-1;}
+.grouped-behavior:before{content:""; position:absolute; top:0; left:25px; display:block; width:2px; height:50%; background-color:#ccc; z-index:-1;}
+.grouped-behavior:after{content:""; position:absolute; bottom:0; left:25px; display:block; width:2px; height:50%; background-color:#ccc; z-index:-1;}
+.grouped-behavior.first:before{display:none;}
+.grouped-behavior.last:after{display:none;}
+.behavior{background-color:#fff;}
+#calculator-form .label-radio .item-media{background-color:#fff; border-radius:50%;}
