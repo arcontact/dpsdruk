@@ -87,7 +87,7 @@ table.contact-table i{font-size:30px; margin:2px 10px 0 0; color:#b6b6b6;}
 .index-grid a.link3{border-right:2px solid #d00018; border-bottom:2px solid #d00018;}
 .index-grid a.link4{border-bottom:2px solid #d00018;}
 .index-grid a .ripple-wave{z-index:1;}
-.main-toolbar a.link{display:block; text-align:center; line-height:normal; padding-top:3px; overflow:hidden; font-size:10px; color:#f7b2ba;}
+.main-toolbar a.link{font-size:10px; color:#f7b2ba;}
 .main-toolbar a.link.active{color:#fff;}
 .main-toolbar i{display:block;}
 .card-header-red{background-color:#e2001a; color:#fff;}

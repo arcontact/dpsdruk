@@ -942,6 +942,7 @@ var app = {
 													if(typeof behavior != 'undefined'){
 														app.calculator_handle_behavior(input, behavior);
 													}
+													app.calculator_validate();
 												} else {
 													input.trigger('change');
 												}
