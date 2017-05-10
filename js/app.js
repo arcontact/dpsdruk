@@ -68,6 +68,7 @@ var app = {
 			notificationCloseButtonText: 'Zamknij',
 			modalPreloaderTitle: '',
 			modalTitle: '',
+			modalButtonCancel: 'Zamknij',
 			smartSelectBackText: 'Powrót',
 			smartSelectPopupCloseText: 'Zamknij',
 			smartSelectPickerCloseText: 'Zrobione',
@@ -896,9 +897,15 @@ var app = {
 										}
 										if(radios.length){
 											$$.each(radios, function(key,service){
-												$$('#services').append('<li class="behavior-append"><label class="label-radio item-content"><input type="radio" name="service_radio['+service.radio.escapeDiacritics()+']" value="'+service.id+'" '+(service.behavior ? 'data-behavior="'+service.behavior+'"' : '')+' /><div class="item-media"><i class="icon icon-form-radio"></i></div><div class="item-inner"><div class="item-title">'+service.service_translation_title+'</div></div></label></li>');
+												$$('#services').append('<li class="behavior-append" data-radio="'+service.radio.escapeDiacritics()+'"><label class="label-radio item-content"><input type="radio" name="service_radio['+service.radio.escapeDiacritics()+']" value="'+service.id+'" '+(service.behavior ? 'data-behavior="'+service.behavior+'"' : '')+' /><div class="item-media"><i class="icon icon-form-radio"></i></div><div class="item-inner"><div class="item-title">'+service.service_translation_title+'</div></div></label></li>');
 											});
-											$$('#services input[type="radio"]').on('click',function(){
+											$$('#services .behavior-append[data-radio]').each(function(){
+												if(!$$('#services .behavior-append[data-radio="'+$$(this).data('radio')+'"]').hasClass('grouped-behavior')){
+													$$('#services .behavior-append[data-radio="'+$$(this).data('radio')+'"]').addClass('grouped-behavior');
+												}
+												$$('#services .behavior-append[data-radio="'+$$(this).data('radio')+'"]').eq(0).addClass('first');
+											});
+											$$('#services input[type="radio"]').on('change',function(){
 												var input = $$(this);
 												var restRadios = $$('#services input[type="radio"]').filter(function(i,el) {
 													return !$$(this).is(input);
@@ -922,6 +929,10 @@ var app = {
 													app.calculator_handle_behavior(input, behavior);
 												}
 												app.calculator_validate();
+											});
+											$$('#services input[type="radio"]').on('click',function(){
+												var state = $$(this).hasClass('imChecked');
+												myApp.alert(state);
 											});
 										}
 									}
@@ -1108,7 +1119,7 @@ var app = {
 			case 'linia_ciecia':{
 				var behavior_outer = $$('.behavior[data-id="'+input.val()+'"]');
 				if(behavior_outer.length <= 0){
-					var behavior_outer = '<li class="behavior" data-id="'+input.val()+'"><div class="item-content"><div class="item-inner"><div class="item-title label">* Długość linii cięcia</div><div class="item-input"><input type="number" name="behavior['+input.val()+']" min="1" required /></div></div></div></li>';
+					var behavior_outer = '<li class="behavior" data-id="'+input.val()+'"><div class="item-content"><div class="item-inner"><div class="item-title label">* Długość linii cięcia</div><div class="item-input item-input-field"><input type="number" name="behavior['+input.val()+']" min="1" required /></div></div></div></li>';
 					input.closest('.behavior-append').append(behavior_outer);
 					input.closest('.behavior-append').find('.behavior input').on('change',function(){
 						if(parseInt($$(this).val()) > 0){
