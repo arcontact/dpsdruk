@@ -57,6 +57,7 @@ var app = {
 		return true;
 	},
 	init: function(){
+		navigator.splashscreen.hide();
 		myApp = new Framework7({
 			uniqueHistory: true,
 			swipePanelOnlyClose: true,
@@ -296,7 +297,7 @@ var app = {
 		});
 		myApp.onPageReinit('index', function(page){
 			if(!initilize_complete){
-				app.init();
+				//app.init();
 			}
 		});
 		myApp.onPageInit('index_articles', function(page){
