@@ -56,6 +56,7 @@
 	
     <!-- Define app icon and splashscreen for each platform. -->
     <platform name="android">
+		<icon   src="icon.png" />
 		<icon   src="res/icon/android/drawable-ldpi-icon.png"               qualifier="ldpi" width="36" height="36" />
         <icon   src="res/icon/android/drawable-mdpi-icon.png"               qualifier="mdpi" width="48" height="48" />
         <icon   src="res/icon/android/drawable-hdpi-icon.png"               qualifier="hdpi" width="72" height="72" />
@@ -68,6 +69,7 @@
         <!-- <splash src="res/screen/android/drawable-land-xhdpi-screen.png"     qualifier="land-xhdpi" /> -->
         <!-- <splash src="res/screen/android/drawable-land-xxhdpi-screen.png"    qualifier="land-xxhdpi" /> -->
         <!-- <splash src="res/screen/android/drawable-land-xxxhdpi-screen.png"   qualifier="land-xxxhdpi" /> -->
+		<splash src="splash.png" />
         <splash src="res/screen/android/drawable-port-ldpi-screen.png"      qualifier="port-ldpi" />
         <splash src="res/screen/android/drawable-port-mdpi-screen.png"      qualifier="port-mdpi" />
         <splash src="res/screen/android/drawable-port-hdpi-screen.png"      qualifier="port-hdpi" />
