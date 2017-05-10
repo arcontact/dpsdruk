@@ -58,10 +58,10 @@ var app = {
 	},
 	init: function(){
 		myApp = new Framework7({
+			uniqueHistory: true,
 			swipePanelOnlyClose: true,
 			swipeout: false,
 			sortable: false,
-			uniqueHistory: true,
 			tapHold: true,
 			pushState: true,
 			material: true,
@@ -79,7 +79,7 @@ var app = {
 			}
 		});
 		mainView = myApp.addView('.view-main', {
-			domCache: true
+			domCache: true,
 		});
 		if(app.gotConnection()){
 			myApp.showPreloader('Ładuję aplikację...');
@@ -93,7 +93,7 @@ var app = {
 					chatid: chatid
 				},
 				success: function(response, status, xhr){
-					$$('#splash_articles').html('<div class="list-block media-list"><ul></ul></div>');
+					$$('.splash_articles').html('<div class="list-block media-list"><ul></ul></div>');
 					$$.each(response.articles, function(i, article){
 						var article_date = moment(article.date).format('LL');
 						var article_image;
@@ -103,10 +103,10 @@ var app = {
 							article_image = 'img/noimage200x104.jpg';
 						}
 						var li = '<li><a href="single_article.html?article_id='+article.id+'" class="item-link item-content"><div class="item-media"><img data-src="'+article_image+'" class="lazy" width="80" height="42" /></div><div class="item-inner"><div class="item-title-row"><div class="item-title">'+article.title+'</div></div><div class="item-text"><small>'+article_date+'</small></div></div></a></li>';
-						$$('#splash_articles ul').append(li);
+						$$('.splash_articles ul').append(li);
 						$$('.articles-list ul').append(li);
 					});
-					$$('#splash_articles').append('<a href="#index_articles" class="button">POKAŻ WSZYSTKIE</a>');
+					$$('.splash_articles').append('<a href="#index_articles" class="button">POKAŻ WSZYSTKIE</a>');
 					myApp.initImagesLazyLoad($$('.page[data-page="index"]'));
 					
 					$$('#categories-list').html('<div class="list-block"></div>');
@@ -114,7 +114,7 @@ var app = {
 						if(typeof category.children != 'undefined'){
 							var html = '<div class="list-group"><ul><li class="list-group-title">'+category.title+'</li>';
 							$$.each(category.children,function(i, subcategory){
-								html += '<li><a href="single_category.html?category_id='+category.id+'&subcategory_id='+subcategory.id+'" class="item-link item-content close-panel" data-reload="true" data-id="'+subcategory.id+'"><div class="item-inner"><div class="item-title">'+subcategory.title+'</div></div></a></li>';
+								html += '<li><a href="single_category.html?category_id='+category.id+'&subcategory_id='+subcategory.id+'" class="item-link item-content close-panel" data-id="'+subcategory.id+'"><div class="item-inner"><div class="item-title">'+subcategory.title+'</div></div></a></li>';
 							});
 							html += '</ul></div>';
 							$$('#categories-list .list-block').append(html);
@@ -1291,7 +1291,7 @@ var app = {
 		if(ww > 500){
 			rw=140;
 		}
-		$$('#index-grid a').css({
+		$$('.index-grid a').css({
 			'height': rw+'px',
 			'line-height': rw+'px',
 		});
