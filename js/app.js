@@ -57,7 +57,6 @@ var app = {
 		return true;
 	},
 	init: function(){
-		navigator.splashscreen.hide();
 		myApp = new Framework7({
 			uniqueHistory: true,
 			swipePanelOnlyClose: true,
@@ -82,9 +81,14 @@ var app = {
 		mainView = myApp.addView('.view-main', {
 			domCache: true,
 		});
+		app.handle_init_requests();
+		app.listeners();
+	},
+	handle_init_requests: function(){
 		if(app.gotConnection()){
 			myApp.showPreloader('Ładuję aplikację...');
 			var chatid = localStorage.chatid;
+			
 			$$.ajax({
 				url: baseurl+'api/init/'+articles_limit,
 				crossDomain: true,
@@ -191,21 +195,13 @@ var app = {
 					
 					//kalkulator
 					app.init_calculator(response);
-					
 					//chat
 					app.chat_preinit(response);
-					
-					initilize_complete = true;
 					categories = response.categories;
+					initilize_complete = true;
 				},
 				error: function(xhr, status){
-					myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale wystąpił błąd komunikacji ze stroną<br /><a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '', function(){
-						mainView.router.load({
-							url: 'offline_contact.html',
-							pushState: false,
-							animatePages: false
-						});
-					});
+					app.offline('#index');
 				},
 				complete: function(){
 					myApp.hidePreloader();
@@ -214,7 +210,6 @@ var app = {
 		} else {
 			app.offline('#index');
 		}
-		app.listeners();
 	},
 	offline: function(page){
 		var api_init_start_modal = myApp.modal({
@@ -297,7 +292,7 @@ var app = {
 		});
 		myApp.onPageReinit('index', function(page){
 			if(!initilize_complete){
-				//app.init();
+				app.handle_init_requests();
 			}
 		});
 		myApp.onPageInit('index_articles', function(page){
