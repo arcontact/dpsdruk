@@ -30,7 +30,8 @@
     <preference name="phonegap-version"           value="cli-6.5.0" />
 	
 	<preference name="orientation" value="portrait" />
-	<preference name="SplashScreenBackgroundColor" value="white" />
+	<preference name="SplashScreenBackgroundColor" value="#ffffff" />
+	<preference name="BackgroundColor" value="#ffffff" />
 
     <!-- Plugins -->
     <!-- Core plugins -->
