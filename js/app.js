@@ -28,7 +28,7 @@ var	$$ = Dom7, myApp, mainView,
 	calculator_query = {},
 	myMessages, totalMessages = 0, chat_interval,
 	baseurl = 'https://www.beta.dpsdruk.pl/',
-	ENVIRONMENT = 'production'; //production
+	ENVIRONMENT = 'development'; //production
 var app = {
 	initialize: function(){
 		this.bindEvents();
@@ -456,7 +456,7 @@ var app = {
 						var html = '<div class="row">';
 						$$.each(response, function(i, product){
 							var product_image = String(product.image) != 'null' ? baseurl+'assets/producers/s6_'+product.image : 'img/noimage100x100.png';
-							html += '<div class="col-100 tablet-50"><a href="single_product.html?product_id='+product.id+'" class="card text-center"><div class="card-header no-border"><img src="'+product_image+'" alt="" class="img-responsive" /></div><div class="card-content"><div class="card-content-inner"><p>'+product.symbol+'</p><div class="chip"><div class="chip-label">'+product.price_m2+'</div></div></div></div></a></div>';
+							html += '<div class="col-100 tablet-50"><a href="single_product.html?product_id='+product.id+'" class="card text-center"><div class="card-header no-border"><img src="'+product_image+'" alt="" class="img-responsive" /></div><div class="card-content"><div class="card-content-inner"><p>'+product.symbol+'</p><div class="chip"><div class="chip-label">'+product.price_m2+'</div></div></div></div><div class="card-footer">POKAŻ PRODUKT</div></a></div>';
 						});
 						html += '</div>';
 						$$('.single_category_contents').append(html);
@@ -487,11 +487,18 @@ var app = {
 					data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
 					success: function(response, status, xhr){
 						var product = response;
+						
+						var back_url = '#index';
+						if(product.category_id && product.subcategory_id){
+							back_url = 'single_category.html?category_id='+product.category_id+'&subcategory_id='+product.subcategory_id;
+						}
+						$$('.page[data-page="single_product"] .navbar .left a').attr('href', back_url);
+						
 						var html = '<div class="content-block">'+
-						'<h2>'+product.title+'</h2>'+
+						'<h2 class="text-center">'+product.title+'</h2>'+
 						'<div class="text-center">';
 						if(product.can_calculate){
-							html += '<div class="chip"><div class="chip-label">'+product.price_m2+'</div></div><p><a href="#calculator?product_id='+product.id+'&machine_id='+product.machine_id+'&category_id='+product.category_id+'&subcategory_id='+product.subcategory_id+'" class="button button-fill button-raised text-left"><i class="material-icons">&#xE854;</i> Wykonaj kalkulację</a></p>';
+							html += '<div class="chip"><div class="chip-label">'+product.price_m2+'</div></div><p><a href="#calculator?product_id='+product.id+'&machine_id='+product.machine_id+'&category_id='+product.category_id+'&subcategory_id='+product.subcategory_id+'" class="button button-fill button-raised button-big text-center"><i class="material-icons">&#xE5C3;</i> Wykonaj kalkulację</a></p>';
 						} else {
 							html += '<div class="chip"><div class="chip-label">Produkt dostępny na zamówienie.</div></div>';
 						}
@@ -578,6 +585,14 @@ var app = {
 								html += '<li><a href="'+baseurl+'assets/files/'+_file.filename+'" class="external item-link item-content"><div class="item-media"><img src="img/filetypes/'+_file.type+'.png" width="30" height="30"></div><div class="item-inner"><div class="item-title">'+_file.title+'</div></div></a></li>';
 							});
 							html += '</ul></div>';
+							$$('.single_product_contents').append(html);
+						}
+						if(typeof response.products != 'undefined'){
+							var html = '<div class="card"><div class="card-header card-header-red">Pozostałe z kategorii<br />'+product.category.title+'</div><div class="card-content"><div class="list-block"><ul>';
+							$$.each(response.products, function(i,_product){
+								html += '<li><a href="single_product.html?product_id='+_product.id+'" class="item-link item-content"><div class="item-inner"><div class="item-title">'+_product.title+'</div></div></a></li>';
+							});
+							html += '</ul></div></div></div>';
 							$$('.single_product_contents').append(html);
 						}
 					},
