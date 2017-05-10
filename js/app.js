@@ -463,6 +463,10 @@ var app = {
 						$$('.single_category_contents article img').each(function(){
 							$$(this).attr('src', baseurl.substring(0, baseurl.length-1) + $$(this).attr('src').replace(baseurl,"/"));
 						});
+						
+						$$('.page[data-page="single_category"] .navbar .left a').on('click',function(){
+							mainView.router.loadPage('#index');
+						});
 					},
 					error: function(xhr, status){
 						myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />Przepraszamy ale nie udało się pobrać produktów ze strony <a href="'+baseurl+'" class="external">www.dpsdruk.pl</a></div>', '', function(){
