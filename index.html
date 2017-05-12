@@ -13,7 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="css/material-icons.css" />
 	<link rel="stylesheet" type="text/css" href="css/video-js.css" />
 	<link rel="stylesheet" type="text/css" href="css/index.css" />
-	<title>DPSDruk.pl</title>
+	<title>DPS - www.dpsdruk.pl</title>
 </head>
 <body class="layout-white theme-red">
 	<div class="panel-overlay"></div>
@@ -199,36 +199,6 @@
 								<li>
 									<div class="item-content">
 										<div class="item-inner">
-											<div class="item-title label">* Szerokość w mm</div>
-											<div class="item-input">
-												<input type="number" name="width" id="width" min="1" required />
-											</div>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="item-content">
-										<div class="item-inner">
-											<div class="item-title label">* Wysokość w mm</div>
-											<div class="item-input">
-												<input type="number" name="height" id="height" min="1" required />
-											</div>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="item-content">
-										<div class="item-inner">
-											<div class="item-title label">* Nakład</div>
-											<div class="item-input">
-												<input type="number" name="quantity" id="quantity" min="1" required />
-											</div>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="item-content">
-										<div class="item-inner">
 											<div class="item-title label">* Technologia druku</div>
 											<div class="item-input">
 												<select name="machine_id" id="machine_id" required></select>
@@ -267,6 +237,36 @@
 									</div>
 								</li>
 								<div id="product_info"></div>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Szerokość w mm</div>
+											<div class="item-input">
+												<input type="number" name="width" id="width" min="1" required />
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Wysokość w mm</div>
+											<div class="item-input">
+												<input type="number" name="height" id="height" min="1" required />
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="item-content">
+										<div class="item-inner">
+											<div class="item-title label">* Nakład</div>
+											<div class="item-input">
+												<input type="number" name="quantity" id="quantity" min="1" required />
+											</div>
+										</div>
+									</div>
+								</li>
 								<div id="laminates"></div>
 								<div id="services"></div>
 								<!--<li>
@@ -316,11 +316,15 @@
 						</div>
 					</div>
 					<div class="page-content hide-bars-on-scroll">
+						<div id="gmap"></div>
 						<div class="content-block">
 							<table class="contact-table">
 								<tr>
 									<td style="width:1px;"><i class="material-icons">&#xe55f;</i></td>
-									<td><a href="geo:0,0?q=54.148255,19.440690(DPSDRUK)" class="external">ul. Mikołaja Firleja 27<br />82-300 Elbląg</a></td>
+									<td>
+										ul. Mikołaja Firleja 27<br />82-300 Elbląg
+										<!--<br /><a href="geo:0,0?q=54.148255,19.440690(DPSDRUK)" class="external">Pokaż na mapie</a>-->
+									</td>
 								</tr>
 								<tr>
 									<td><i class="material-icons">&#xe8ae;</i></td>
@@ -479,6 +483,7 @@
 	<script type="text/javascript" src="js/video.min.js"></script>
 	<script type="text/javascript" src="js/videojs_pl.js"></script>
 	<script type="text/javascript" src="js/spin.min.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=" async defer></script>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 		app.initialize();

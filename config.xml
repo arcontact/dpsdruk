@@ -6,7 +6,7 @@
         id        = "com.phonegap.dpsdruk"
         version   = "1.0.0">
 
-    <name>DPSDruk.pl</name>
+    <name>DPS</name>
 
     <description>
 		Producent wydruków wielkoformatowych Digital Printing Solutions - www.dpsdruk.pl
