@@ -23,7 +23,7 @@ function videourlToHTML(videourl){
 }
 
 var	$$ = Dom7, myApp, mainView,
-	initilize_complete = false, index_articles_loaded = false, categories = [],
+	initilize_complete = false, index_articles_loaded = false, categories = [], map_loaded = false,
 	articles_limit = 10, articles_offset = articles_limit,
 	calculator_query = {},
 	myMessages, totalMessages = 0, chat_interval,
@@ -292,6 +292,11 @@ var app = {
 		myApp.onPageReinit('index', function(page){
 			if(!initilize_complete){
 				app.handle_init_requests();
+			}
+		});
+		myApp.onPageInit('contact', function(page){
+			if(!map_loaded){
+				app.initMap();
 			}
 		});
 		myApp.onPageInit('index_articles', function(page){
@@ -1404,5 +1409,27 @@ var app = {
 			'height': rw+'px',
 			'line-height': rw+'px',
 		});
+	},
+	
+	initMap: function(){
+		var myLatLng = {lat: 54.148255, lng: 19.440690};
+        var map = new google.maps.Map(document.getElementById('gmap'), {
+			zoom: 13,
+			center: myLatLng,
+			styles: [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#e74c3c"},{"visibility":"on"}]}]
+		});
+        var marker = new google.maps.Marker({
+			position: myLatLng,
+			map: map,
+			title: 'DPSDRUK.PL',
+			icon: 'img/marker.png'
+        });
+		var infowindow = new google.maps.InfoWindow({
+			content: '<strong>Agencja Reklamowa CONTACT</strong><br />ul. Mikołaja Firleja 27<br />82-300 Elbląg'
+		});
+		marker.addListener('click', function() {
+			infowindow.open(map, marker);
+		});
+		map_loaded = true;
 	}
 };

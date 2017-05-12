@@ -101,3 +101,4 @@ table.contact-table i{font-size:30px; margin:2px 10px 0 0; color:#b6b6b6;}
 .main-toolbar a.link{font-size:10px; color:#f7b2ba;}
 .main-toolbar a.link.active{color:#fff;}
 .main-toolbar i{display:block;}
+#gmap{height:200px; background:#f4f4f4 url('../img/loading.gif') center center no-repeat; }
