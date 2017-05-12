@@ -892,6 +892,8 @@ var app = {
 						switch(response.type){
 							case 'success':
 								$$('#product_info').html(response.view);
+								$$('#types-append').html(response.product_types);
+								$$('#express-append').html(response.product_express);
 								$$('#product_id').addClass('has-success').removeClass('has-error');
 								if($$('#product_info input[name="type_id"]').length){
 									$$('input[name="type_id"]').on('change',function(){
