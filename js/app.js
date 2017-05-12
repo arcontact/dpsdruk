@@ -631,7 +631,6 @@ var app = {
 			myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />'+response.message+'</div>','');
 			if(response.type == 'success'){
 				$$('#contact-form')[0].reset();
-				myApp.closePanel();
 			}
 		});
 		$$('#contact-form').on('form:error', function(e){
@@ -661,6 +660,7 @@ var app = {
 			myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />'+response.message+'</div>','');
 			if(response.type == 'success'){
 				$$('#calculator-send')[0].reset();
+				myApp.closePanel();
 			}
 		});
 		$$('#calculator-send').on('form:error', function(e){
