@@ -13,17 +13,62 @@
 	<link rel="stylesheet" type="text/css" href="css/material-icons.css" />
 	<link rel="stylesheet" type="text/css" href="css/video-js.css" />
 	<link rel="stylesheet" type="text/css" href="css/index.css" />
-	<title>Digital Printing Solutions</title>
+	<title>DPS</title>
 </head>
 <body class="layout-white theme-red">
 	<div class="panel-overlay"></div>
+	<div class="panel panel-left panel-reveal">
+		<div class="content-block-title text-center">WYŚLIJ ZAPYTANIE:</div>
+		<div class="content-block text-center" id="calculator-send-info"></div>
+		<form id="calculator-send" class="list-block ajax-submit" method="POST">
+			<ul>
+				<li>
+					<div class="item-content">
+						<div class="item-inner">
+							<div class="item-input">
+								<input type="text" name="name" placeholder="Imię i nazwisko">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="item-content">
+						<div class="item-inner">
+							<div class="item-input">
+								<input type="text" name="phone" placeholder="Numer telefonu">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="item-content">
+						<div class="item-inner">
+							<div class="item-input">
+								<input type="text" name="email" placeholder="Adres e-mail">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="item-content">
+						<div class="item-inner">
+							<div class="item-input">
+								<textarea name="remarks" rows="3" placeholder="Uwagi"></textarea>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="item-content">
+						<div class="item-inner">
+							<button type="submit" class="button button-fill button-raised" style="width:100%;">WYŚLIJ</button>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</form>
+	</div>
 	<div class="panel panel-right panel-reveal">
-		<!--<div class="content-block">
-			<p><a href="#index_articles" class="close-panel">Aktualności</a></p>
-			<p><a href="#about" class="close-panel">Jakość i technologia</a></p>
-			<p><a href="#calculator" class="close-panel">Kalkulator</a></p>
-			<p><a href="#contact" class="close-panel">Kontakt</a></p>
-		</div>-->
 		<div id="categories-list"></div>
 	</div>
 	<div class="views">
@@ -144,10 +189,11 @@
 					</a>
 					<div class="page-content hide-bars-on-scroll">
 						<div class="content-block">
-							<p>Oblicz koszt wydruku korzystając z poniższego kalkulatora.</p>
-							<p>Pełna wersja kalkulatora z możliwością wgrania plików i dokonania płatności on-line znajduje się na naszej stronie internetowej: <a href="https://www.dpsdruk.pl/kalkulator" class="external">www.dpsdruk.pl/kalkulator</a></p>
+							<p>Oblicz koszt wydruku korzystając z poniższego kalkulatora. Jego pełna wersja z możliwością wgrania plików i dokonania płatności on-line znajduje się na naszej stronie internetowej: <a href="https://www.dpsdruk.pl/kalkulator" class="external">www.dpsdruk.pl/kalkulator</a></p>
 						</div>
 						<form class="list-block ajax-submit" method="POST" id="calculator-form">
+							<input type="hidden" name="width_measure" value="mm" />
+							<input type="hidden" name="height_measure" value="mm" />
 							<ul>
 								<li>
 									<div class="item-content">
@@ -231,9 +277,9 @@
 								</li>-->
 								<li>
 									<div class="item-content">
-										<div class="item-inner">
+										<div class="item-inner" style="margin-bottom:0px;">
 											<div id="calculator-response">
-												<small>Wypełnij poprawnie wszystkie pola aby dokonać kalkulacji. Pola oznaczone * są wymagane.</small>
+												<p><small>Wypełnij poprawnie wszystkie pola aby dokonać kalkulacji. Pola oznaczone * są wymagane.</small></p>
 											</div>
 										</div>
 									</div>

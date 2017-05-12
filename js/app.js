@@ -28,6 +28,7 @@ var	$$ = Dom7, myApp, mainView,
 	calculator_query = {},
 	myMessages, totalMessages = 0, chat_interval,
 	baseurl = 'https://www.beta.dpsdruk.pl/',
+	session_id = randId(),
 	ENVIRONMENT = 'development'; //production
 var app = {
 	initialize: function(){
@@ -72,6 +73,8 @@ var app = {
 			smartSelectBackText: 'Powrót',
 			smartSelectPopupCloseText: 'Zamknij',
 			smartSelectPickerCloseText: 'Zrobione',
+			smartSelectBackOnSelect: true,
+			showBarsOnPageScrollEnd: false,
 			onAjaxStart: function(xhr) {
 				myApp.showIndicator();
 			},
@@ -96,7 +99,8 @@ var app = {
 				dataType: 'json',
 				data: {
 					key: 'e547a2036c6faffc2859e132e7eee66f',
-					chatid: chatid
+					chatid: chatid,
+					session_id: session_id
 				},
 				success: function(response, status, xhr){
 					$$('.splash_articles').html('<div class="list-block media-list"><ul></ul></div>');
@@ -194,9 +198,7 @@ var app = {
 						$$(this).attr('src', baseurl.substring(0, baseurl.length-1) + $$(this).attr('src').replace(baseurl,"/"));
 					});
 					
-					//kalkulator
 					app.init_calculator(response);
-					//chat
 					app.chat_preinit(response);
 					categories = response.categories;
 					initilize_complete = true;
@@ -268,10 +270,6 @@ var app = {
 		$$(document).on('page:init', function(e){
 			if(!app.gotConnection() && mainView.activePage.name != 'offline' && mainView.activePage.name != 'offline_contact'){
 				app.offline();
-			} else {
-				if(mainView.activePage.name == 'contact'){
-					$$('#contact-form').attr('action', baseurl+'api/contact_form?key=e547a2036c6faffc2859e132e7eee66f');
-				}
 			}
 		});
 		$$(document).on('page:afteranimation', function(e){
@@ -309,7 +307,10 @@ var app = {
 							url: baseurl+'api/index_articles/' + articles_limit + '/' + articles_offset,
 							crossDomain: true,
 							dataType: 'json',
-							data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
+							data: {
+								key: 'e547a2036c6faffc2859e132e7eee66f',
+								session_id: session_id
+							},
 							success: function(response, status, xhr){
 								loading = false;
 								if(response.length <= 0){
@@ -352,7 +353,10 @@ var app = {
 					url: baseurl+'api/get_article/' + page.query.article_id,
 					crossDomain: true,
 					dataType: 'json',
-					data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
+					data: {
+						key: 'e547a2036c6faffc2859e132e7eee66f',
+						session_id: session_id
+					},
 					success: function(response, status, xhr){
 						var article = response;
 						var article_date = moment(article.date).format('LLLL');
@@ -439,7 +443,10 @@ var app = {
 					url: baseurl+'api/index_products/' + page.query.subcategory_id,
 					crossDomain: true,
 					dataType: 'json',
-					data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
+					data: {
+						key: 'e547a2036c6faffc2859e132e7eee66f',
+						session_id: session_id
+					},
 					success: function(response, status, xhr){
 						$$.each(categories, function(i, category){
 							if(category.id == page.query.category_id){
@@ -485,7 +492,10 @@ var app = {
 					url: baseurl+'api/get_product/' + page.query.product_id,
 					crossDomain: true,
 					dataType: 'json',
-					data: {key: 'e547a2036c6faffc2859e132e7eee66f'},
+					data: {
+						key: 'e547a2036c6faffc2859e132e7eee66f',
+						session_id: session_id
+					},
 					success: function(response, status, xhr){
 						var product = response;
 						
@@ -610,6 +620,7 @@ var app = {
 				app.offline();
 			}
 		});
+		$$('#contact-form').attr('action', baseurl+'api/contact_form?key=e547a2036c6faffc2859e132e7eee66f&session_id='+session_id); //baseurl definiowany jest w app.js
 		$$('#contact-form').on('form:beforesend', function(e){
 			myApp.showPreloader();
 		});
@@ -620,9 +631,39 @@ var app = {
 			myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />'+response.message+'</div>','');
 			if(response.type == 'success'){
 				$$('#contact-form')[0].reset();
+				myApp.closePanel();
 			}
 		});
 		$$('#contact-form').on('form:error', function(e){
+			myApp.hidePreloader();
+			myApp.alert('Przepraszamy ale wystąpił błąd podczas wysyłania formularza.','');
+		});
+		$$('#calculator-form').on('form:beforesend', function(e){
+			myApp.showPreloader();
+		});
+		$$('#calculator-form').on('form:success', function(e){
+			myApp.hidePreloader();
+			var xhr = e.detail.xhr;
+			var response = JSON.parse(xhr.response);
+			console.log(response);
+		});
+		$$('#calculator-form').on('form:error', function(e){
+			myApp.hidePreloader();
+			myApp.alert('Przepraszamy ale wystąpił błąd podczas komunikacji ze stroną www.dpsdruk.pl.','');
+		});
+		$$('#calculator-send').on('form:beforesend', function(e){
+			myApp.showPreloader();
+		});
+		$$('#calculator-send').on('form:success', function(e){
+			myApp.hidePreloader();
+			var xhr = e.detail.xhr;
+			var response = JSON.parse(xhr.response);
+			myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />'+response.message+'</div>','');
+			if(response.type == 'success'){
+				$$('#calculator-send')[0].reset();
+			}
+		});
+		$$('#calculator-send').on('form:error', function(e){
 			myApp.hidePreloader();
 			myApp.alert('Przepraszamy ale wystąpił błąd podczas wysyłania formularza.','');
 		});
@@ -642,6 +683,8 @@ var app = {
 		});
 	},
 	init_calculator: function(response){
+		$$('#calculator-form').attr('action', baseurl+'api/calculator_form?key=e547a2036c6faffc2859e132e7eee66f&session_id='+session_id); //baseurl definiowany jest w app.js więc tutaj trzeba ustawić atrybut `action`
+		$$('#calculator-send').attr('action', baseurl+'api/calculator_send?key=e547a2036c6faffc2859e132e7eee66f&session_id='+session_id); //baseurl definiowany jest w app.js więc tutaj trzeba ustawić atrybut `action`
 		$$.each(response.calculator_machines,function(id,title){
 			$$('#machine_id').append('<option value="'+id+'" '+(id=='1' ? 'selected="selected"' : '')+'>'+title+'</option>');
 		});
@@ -653,7 +696,6 @@ var app = {
 		$$('#width').val('');
 		$$('#height').val('');
 		$$('#quantity').val('');
-		
 		app.calculator_events();
 	},
 	calculator_fill: function(query){
@@ -673,6 +715,7 @@ var app = {
 					dataType: 'json',
 					data: {
 						key: 'e547a2036c6faffc2859e132e7eee66f',
+						session_id: session_id,
 						action: 'machine_change',
 						machine_id: $$(this).val()
 					},
@@ -728,6 +771,7 @@ var app = {
 					dataType: 'json',
 					data: {
 						key: 'e547a2036c6faffc2859e132e7eee66f',
+						session_id: session_id,
 						action: 'category_change',
 						category_id: $$(this).val()
 					},
@@ -785,6 +829,7 @@ var app = {
 					dataType: 'json',
 					data: {
 						key: 'e547a2036c6faffc2859e132e7eee66f',
+						session_id: session_id,
 						action: 'subcategory_change',
 						subcategory_id: $$(this).val()
 					},
@@ -837,6 +882,7 @@ var app = {
 					dataType: 'json',
 					data: {
 						key: 'e547a2036c6faffc2859e132e7eee66f',
+						session_id: session_id,
 						action: 'product_change',
 						product_id: $$(this).val()
 					},
@@ -861,7 +907,7 @@ var app = {
 										}
 									});
 									if(laminates.length){
-										$$('#laminates').append('<li class="item-divider">Wybierz laminat</li>');
+										$$('#laminates').append('<li class="item-divider">* Laminat</li>');
 										$$('#laminates').append('<li><label class="label-radio item-content"><input type="radio" name="laminate" value="0" checked="checked" /><div class="item-media"><i class="icon icon-form-radio"></i></div><div class="item-inner"><div class="item-title">Bez laminatu</div></div></label></li>');
 										$$.each(laminates, function(key,laminate){
 											$$('#laminates').append('<li><label class="label-radio item-content"><input type="radio" name="laminate" value="'+laminate.id+'" /><div class="item-media"><i class="icon icon-form-radio"></i></div><div class="item-inner"><div class="item-title">'+laminate.service_translation_title+'</div></div></label></li>');
@@ -934,17 +980,19 @@ var app = {
 											$$('#services .behavior-append[data-radio]').on('click',function(e){
 												e.stopPropagation();
 												e.preventDefault();
-												var input = $$(this).find('input[type="radio"]');
-												var state = input.prop('checked');
-												if(state){
-													input.prop('checked',false).removeClass('imChecked');
-													var behavior = input.data('behavior');
-													if(typeof behavior != 'undefined'){
-														app.calculator_handle_behavior(input, behavior);
+												if(!$$(e.target).hasClass('prevent-click')){
+													var input = $$(this).find('input[type="radio"]');
+													var state = input.prop('checked');
+													if(state){
+														input.prop('checked',false).removeClass('imChecked');
+														var behavior = input.data('behavior');
+														if(typeof behavior != 'undefined'){
+															app.calculator_handle_behavior(input, behavior);
+														}
+														app.calculator_validate();
+													} else {
+														input.trigger('change');
 													}
-													app.calculator_validate();
-												} else {
-													input.trigger('change');
 												}
 											});
 										}
@@ -1020,9 +1068,12 @@ var app = {
 		if(valid){
 			app.calculator_calculate();
 		} else {
-			$$('#calculator-response').html('<small>Wypełnij poprawnie wszystkie pola aby dokonać kalkulacji. Pola oznaczone * są wymagane.</small>');
+			$$('#calculator-response').html('<p><small>Wypełnij poprawnie wszystkie pola aby dokonać kalkulacji. Pola oznaczone * są wymagane.</small></p>');
 			$$('#calculator-fab').removeClass('in').addClass('out');
 		}
+		
+		//ukryj tabbar jeżeli dokonano już kalkulacji
+		$$('.page[data-page="calculator"]').addClass('no-toolbar');
 	},
 	calculator_calculate: function(){
 		var services_checkboxes_array = [];
@@ -1055,6 +1106,7 @@ var app = {
 			dataType: 'json',
 			data: {
 				key: 'e547a2036c6faffc2859e132e7eee66f',
+				session_id: session_id,
 				action: 'calculate',
 				machine_id: $$('#machine_id').val(),
 				product_id: $$('#product_id').val(),
@@ -1079,12 +1131,12 @@ var app = {
 							var target = this;
 							var buttons = [
 								{
-									text: $$(this).data('text'),
-									label: true
-								},
-								{
 									text: '<i class="material-icons">&#xE5CD;</i> Zamknij',
 									color: 'red'
+								},
+								{
+									text: $$(this).data('text'),
+									label: true
 								},
 							];
 							myApp.actions(target, buttons);
@@ -1099,9 +1151,32 @@ var app = {
 								$$('#calculator-fab').removeClass('out').addClass('in');
 							}
 						});
+						$$('.page[data-page="calculator"] .page-content').trigger('scroll');
+						
+						var url_params = {
+							machine_id: $$('#machine_id').val(),
+							product_id: $$('#product_id').val(),
+							width: $$('#width').val(),
+							height: $$('#height').val(),
+							width_measure: 'mm',
+							height_measure: 'mm',
+							quantity: $$('#quantity').val(),
+							laminate: ($$('input[name="laminate"]:checked').length && $$('input[name="laminate"]:checked').val()!='0' ? $$('input[name="laminate"]:checked').val() : ''),
+							services_checkboxes: services_checkboxes_array,
+							services_radios: services_radios_array,
+							type_id: $$('input[name="type_id"]').length ? $$('input[name="type_id"]:checked').val() : '',
+							express: ($$('#express').length && $$('#express').prop('checked') ? '1' : ''),
+							behavior: behavior_array
+						};
+						var _url = baseurl+'kalkulator?'+$$.serializeObject(url_params);
+						$$('#calculator-button-url').attr('href', _url);
+						
+						$$('#calculator-send-info').html('<strong>'+response.title+'</strong><br /><strong>'+response.width+'</strong> x <strong>'+response.height+'</strong> mm<br /><strong>'+response.quantity+'</strong> szt.<br /><strong>'+response.price_brutto+'</strong> PLN brutto');
 					break;
 					case 'error':
 						myApp.alert(response.message, '');
+						$$('#calculator-response').html('<p><small>Wypełnij poprawnie wszystkie pola aby dokonać kalkulacji. Pola oznaczone * są wymagane.</small></p>');
+						$$('#calculator-fab').removeClass('in').addClass('out');
 					break;
 				}
 			},
@@ -1132,7 +1207,7 @@ var app = {
 			case 'linia_ciecia':{
 				var behavior_outer = $$('.behavior[data-id="'+input.val()+'"]');
 				if(behavior_outer.length <= 0){
-					var behavior_outer = '<li class="behavior" data-id="'+input.val()+'"><div class="item-content"><div class="item-inner"><div class="item-title label">* Długość linii cięcia</div><div class="item-input item-input-field"><input type="number" name="behavior['+input.val()+']" min="1" required /></div></div></div></li>';
+					var behavior_outer = '<li class="behavior prevent-click" data-id="'+input.val()+'"><div class="item-content prevent-click"><div class="item-inner prevent-click"><div class="item-title label prevent-click">* Długość linii cięcia</div><div class="item-input item-input-field prevent-click"><input type="number" name="behavior['+input.val()+']" min="1" required class="prevent-click" /></div></div></div></li>';
 					input.closest('.behavior-append').append(behavior_outer);
 					input.closest('.behavior-append').find('.behavior input').on('change',function(){
 						if(parseInt($$(this).val()) > 0){
@@ -1217,6 +1292,7 @@ var app = {
 				dataType: 'json',
 				data: {
 					key: 'e547a2036c6faffc2859e132e7eee66f',
+					session_id: session_id,
 					chatid: localStorage.chatid,
 					content: messageText,
 					nickname: localStorage.nickname
@@ -1264,6 +1340,7 @@ var app = {
 			dataType: 'json',
 			data: {
 				key: 'e547a2036c6faffc2859e132e7eee66f',
+				session_id: session_id,
 				chatid: localStorage.chatid,
 				totalMessages: totalMessages
 			},

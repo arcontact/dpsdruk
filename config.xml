@@ -6,14 +6,14 @@
         id        = "com.phonegap.dpsdruk"
         version   = "1.0.0">
 
-    <name>DPSdruk.pl</name>
+    <name>DPS</name>
 
     <description>
-       DPSdruk.pl
+		Producent wydruków wielkoformatowych Digital Printing Solutions - www.dpsdruk.pl
     </description>
 
     <author href="http://www.arcontact.pl" email="contact@arcontact.pl">
-       Agencja Reklamowa Contact
+       Agencja Reklamowa CONTACT
     </author>
 
     <!-- Define the main entry-point to the application -->
