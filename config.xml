@@ -32,8 +32,7 @@
 	<preference name="orientation" value="portrait" />
 	
 	<preference name="ShowSplashScreenSpinner" value="false"/>
-	<preference name="SplashScreenDelay" value="3000" />
-	<preference name="FadeSplashScreenDuration" value="500"/>
+	<preference name="FadeSplashScreen" value="false"/>
 
     <!-- Plugins -->
     <!-- Core plugins -->

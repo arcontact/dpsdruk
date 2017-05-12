@@ -644,7 +644,10 @@ var app = {
 			myApp.hidePreloader();
 			var xhr = e.detail.xhr;
 			var response = JSON.parse(xhr.response);
-			console.log(response);
+			myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />'+response.message+'</div>','');
+			if(response.type == 'success'){
+				window.open(baseurl+response.file_path, '_system');
+			}
 		});
 		$$('#calculator-form').on('form:error', function(e){
 			myApp.hidePreloader();
@@ -659,7 +662,6 @@ var app = {
 			var response = JSON.parse(xhr.response);
 			myApp.alert('<div class="text-center"><img src="img/logo.png" class="img-responsive" /><br />'+response.message+'</div>','');
 			if(response.type == 'success'){
-				$$('#calculator-send')[0].reset();
 				myApp.closePanel();
 			}
 		});
@@ -1141,7 +1143,7 @@ var app = {
 							];
 							myApp.actions(target, buttons);
 						});
-						$$('#calculator-fab').removeClass('out').addClass('in');
+						$$('#calculator-fab').removeClass('out').addClass('in').html('<i class="material-icons">&#xE5DB;</i>&nbsp;<strong>'+response.price_brutto+'</strong>&nbsp;zł');
 						var offset = $$('#calculator-response').offset().top + $$('.page[data-page="calculator"] .page-content').scrollTop();
 						$$('.page[data-page="calculator"] .page-content').off('scroll').on('scroll',function(){
 							var topWindow = $$(this).scrollTop() + $$(window).height();
@@ -1161,17 +1163,21 @@ var app = {
 							width_measure: 'mm',
 							height_measure: 'mm',
 							quantity: $$('#quantity').val(),
-							laminate: ($$('input[name="laminate"]:checked').length && $$('input[name="laminate"]:checked').val()!='0' ? $$('input[name="laminate"]:checked').val() : ''),
 							services_checkboxes: services_checkboxes_array,
 							services_radios: services_radios_array,
-							type_id: $$('input[name="type_id"]').length ? $$('input[name="type_id"]:checked').val() : '',
-							express: ($$('#express').length && $$('#express').prop('checked') ? '1' : ''),
 							behavior: behavior_array
 						};
+						$$('input[name="laminate"]:checked').length && $$('input[name="laminate"]:checked').val()!='0' ? url_params.laminate = $$('input[name="laminate"]:checked').val() : null;
+						$$('input[name="type_id"]').length ? url_params.type_id = $$('input[name="type_id"]:checked').val() : null;
+						$$('#express').length && $$('#express').prop('checked') ? url_params.express = '1' : null;
 						var _url = baseurl+'kalkulator?'+$$.serializeObject(url_params);
 						$$('#calculator-button-url').attr('href', _url);
 						
+						var serialized_data = url_params;
+						serialized_data.price_netto = response.price_netto;
+						serialized_data.price_brutto = response.price_brutto;
 						$$('#calculator-send-info').html('<strong>'+response.title+'</strong><br /><strong>'+response.width+'</strong> x <strong>'+response.height+'</strong> mm<br /><strong>'+response.quantity+'</strong> szt.<br /><strong>'+response.price_brutto+'</strong> PLN brutto');
+						$$('#calculator-send-serialized-data').val(JSON.stringify(serialized_data));
 					break;
 					case 'error':
 						myApp.alert(response.message, '');
@@ -1207,7 +1213,7 @@ var app = {
 			case 'linia_ciecia':{
 				var behavior_outer = $$('.behavior[data-id="'+input.val()+'"]');
 				if(behavior_outer.length <= 0){
-					var behavior_outer = '<li class="behavior prevent-click" data-id="'+input.val()+'"><div class="item-content prevent-click"><div class="item-inner prevent-click"><div class="item-title label prevent-click">* Długość linii cięcia</div><div class="item-input item-input-field prevent-click"><input type="number" name="behavior['+input.val()+']" min="1" required class="prevent-click" /></div></div></div></li>';
+					var behavior_outer = '<li class="behavior prevent-click" data-id="'+input.val()+'"><div class="item-content prevent-click"><div class="item-inner prevent-click"><div class="item-title label prevent-click">* Długość linii cięcia w mm</div><div class="item-input item-input-field prevent-click"><input type="number" name="behavior['+input.val()+']" min="1" required class="prevent-click" /></div></div></div></li>';
 					input.closest('.behavior-append').append(behavior_outer);
 					input.closest('.behavior-append').find('.behavior input').on('change',function(){
 						if(parseInt($$(this).val()) > 0){
