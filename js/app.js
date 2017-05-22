@@ -134,7 +134,7 @@ var app = {
 					$$('.page[data-page="about"] .page-content').append('<div class="content-block"><article>'+response.about.content+'</article></div>');
 					if(typeof response.about.sections != 'undefined'){
 						$$.each(response.about.sections,function(i,section){
-							$$('.page[data-page="about"] .page-content').append('<div class="content-block-title">'+section.title+'</div><div class="content-block"><article>'+section.content.replace(/<a(\s[^>]*)?>/ig, '').replace(/<\/a>/ig, '')+'</article></div>');
+							$$('.page[data-page="about"] .page-content').append('<div class="clearfix"></div><div class="content-block"><h3>'+section.title+'</h3><article>'+section.content.replace(/<a(\s[^>]*)?>/ig, '').replace(/<\/a>/ig, '')+'</article></div>');
 							
 							if(typeof section.galleries != 'undefined'){
 								var sectionPhotoBrowsers = [];
@@ -465,7 +465,7 @@ var app = {
 						var html = '<div class="row">';
 						$$.each(response, function(i, product){
 							var product_image = String(product.image) != 'null' ? baseurl+'assets/producers/s6_'+product.image : 'img/noimage100x100.png';
-							html += '<div class="col-100 tablet-50"><a href="single_product.html?product_id='+product.id+'" class="card text-center"><div class="card-header no-border"><img src="'+product_image+'" alt="" class="img-responsive" /></div><div class="card-content"><div class="card-content-inner"><p>'+product.symbol+'</p><div class="chip"><div class="chip-label">'+product.price_m2+'</div></div></div></div><div class="card-footer">POKAŻ PRODUKT</div></a></div>';
+							html += '<div class="col-100 tablet-50"><a href="single_product.html?product_id='+product.id+'" class="card text-center"><div class="card-header no-border"><img src="'+product_image+'" alt="" class="img-responsive" /></div><div class="card-content"><div class="card-content-inner"><p>'+product.symbol+'</p><div class="chip"><div class="chip-label">'+product.price+'</div></div></div></div><div class="card-footer">POKAŻ PRODUKT</div></a></div>';
 						});
 						html += '</div>';
 						$$('.single_category_contents').append(html);
@@ -514,7 +514,7 @@ var app = {
 						'<h2 class="text-center">'+product.title+'</h2>'+
 						'<div class="text-center">';
 						if(product.can_calculate){
-							html += '<div class="chip"><div class="chip-label">'+product.price_m2+'</div></div><p><a href="#calculator?product_id='+product.id+'&machine_id='+product.machine_id+'&category_id='+product.category_id+'&subcategory_id='+product.subcategory_id+'" class="button button-fill button-raised button-big text-center"><i class="material-icons">&#xE5C3;</i> Wykonaj kalkulację</a></p>';
+							html += '<div class="chip"><div class="chip-label">'+product.price+'</div></div><p><a href="#calculator?product_id='+product.id+'&machine_id='+product.machine_id+'&category_id='+product.category_id+'&subcategory_id='+product.subcategory_id+'" class="button button-fill button-raised button-big text-center"><i class="material-icons">&#xE5C3;</i> Wykonaj kalkulację</a></p>';
 						} else {
 							html += '<div class="chip"><div class="chip-label">Produkt dostępny na zamówienie.</div></div>';
 						}
@@ -732,8 +732,8 @@ var app = {
 								if(response.categories != 'undefined'){
 									var categories = [];
 									categories.push('<option value="">wybierz</option>');
-									$$.each(response.categories, function(key,value){
-										categories.push('<option value="' + key + '">'+value+'</option>');
+									$$.each(response.categories, function(position,category){
+										categories.push('<option value="' + category.id + '">'+category.title+'</option>');
 									});
 									$$('#category_id').html(categories.join(''));
 									$$('#machine_id').addClass('has-success').removeClass('has-error');
@@ -788,8 +788,8 @@ var app = {
 								if(response.subcategories != 'undefined'){
 									var subcategories = [];
 									subcategories.push('<option value="">wybierz</option>');
-									$$.each(response.subcategories, function(key,value){
-										subcategories.push('<option value="' + key + '">'+value+'</option>');
+									$$.each(response.subcategories, function(position,subcategory){
+										subcategories.push('<option value="' + subcategory.id + '">'+subcategory.title+'</option>');
 									});
 									$$('#subcategory_id').html(subcategories.join(''));
 									$$('#category_id').addClass('has-success').removeClass('has-error');
@@ -845,13 +845,17 @@ var app = {
 							case 'success':
 								var products = [];
 								products.push('<option value="">wybierz</option>');
+								var first_val;
 								$$.each(response.products, function(key,value){
 									products.push('<option value="'+value.id+'">'+value.product_translation_title+'</option>');
+									first_val = value.id
 								});
 								$$('#product_id').html(products.join(''));
 								$$('#subcategory_id').addClass('has-success').removeClass('has-error');
 								$$('#product_id').removeClass('has-success has-error');
-								
+								if(products.length == 2){
+									$$('#product_id').val(first_val).trigger('change');
+								}
 								if(typeof calculator_query.product_id != 'undefined'){
 									$$('#product_id').val(calculator_query.product_id).trigger('change');
 								}
@@ -900,11 +904,46 @@ var app = {
 								$$('#types-append').html(response.product_types);
 								$$('#express-append').html(response.product_express);
 								$$('#product_id').addClass('has-success').removeClass('has-error');
-								if($$('#product_info input[name="type_id"]').length){
+								
+								var product = response.product[0];
+								if(product.price_pcs){
+									if(typeof product.width != 'undefined'){
+										var default_product_width = product.width;
+										$$('#width').val(default_product_width);
+									}
+									if(typeof product.height != 'undefined'){
+										var default_product_height = product.height;
+										$$('#height').val(default_product_height);
+									}
+									$$('#width, #height').addClass('has-success disabled').attr('readonly','readonly');
+								} else {
+									$$('#width, #height').removeAttr('readonly').removeClass('disabled');
+								}
+								
+								if($$('input[name="type_id"]').length){
+									var type_data = $$('input[name="type_id"]:checked').dataset();
+									if(typeof type_data.width != 'undefined'){
+										$$('#width').val(type_data.width);
+									}
+									if(typeof type_data.height != 'undefined'){
+										$$('#height').val(type_data.height);
+									}
 									$$('input[name="type_id"]').on('change',function(){
+										var type_data = $$(this).dataset();
+										if(typeof type_data.width != 'undefined'){
+											$$('#width').val(type_data.width);
+										} else if(typeof default_product_width != 'undefined'){
+											$$('#width').val(default_product_width);
+										}
+										if(typeof type_data.height != 'undefined'){
+											$$('#height').val(type_data.height);
+										} else if(typeof default_product_height != 'undefined'){
+											$$('#height').val(default_product_height);
+										}
 										app.calculator_validate();
 									});
 								}
+								
 								var laminates = [];
 								var services = [];
 								if(typeof response.services != 'undefined' && response.services.length){
@@ -1025,6 +1064,7 @@ var app = {
 					complete: function(){
 						myApp.hidePreloader();
 						app.calculator_validate();
+						calculator_query = {};
 					}
 				});
 			} else {
