@@ -27,9 +27,9 @@ var	$$ = Dom7, myApp, mainView,
 	articles_limit = 10, articles_offset = articles_limit,
 	calculator_query = {},
 	myMessages, totalMessages = 0, chat_interval,
-	baseurl = 'https://www.beta.dpsdruk.pl/',
+	baseurl = 'https://www.dpsdruk.pl/',
 	session_id = randId(),
-	ENVIRONMENT = 'development'; //production
+	ENVIRONMENT = 'production'; //development | production
 var app = {
 	initialize: function(){
 		this.bindEvents();
